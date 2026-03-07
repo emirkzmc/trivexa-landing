@@ -18,10 +18,10 @@ export default function Navbar({ currentPath, isScrolled, onNavigate }: NavbarPr
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        hasSolidStyle ? "bg-black/[0.06] backdrop-blur-md" : "bg-transparent"
+        hasSolidStyle ? "bg-black/6 backdrop-blur-md" : "bg-transparent"
       }`}
     >
-      <nav className="mx-auto flex h-20 max-w-[1400px] items-center justify-between px-8 md:px-12">
+      <nav className="mx-auto flex h-20 max-w-350 items-center justify-between px-8 md:px-12">
         <button type="button" onClick={() => onNavigate("/")} className={`text-xl font-semibold tracking-[0.12em] ${textColorClass}`}>
           TRIVEXA
         </button>
