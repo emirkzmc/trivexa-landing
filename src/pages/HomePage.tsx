@@ -1,5 +1,6 @@
 import AgencyIntroSection from "../components/AgencyIntroSection";
 import HeroSection from "../components/HeroSection";
+import HomeExtraSections from "../components/HomeExtraSections";
 
 export default function HomePage() {
   const handleStartClick = () => {
@@ -10,6 +11,7 @@ export default function HomePage() {
     <main className="scroll-smooth">
       <HeroSection onStartClick={handleStartClick} />
       <AgencyIntroSection />
+      <HomeExtraSections />
     </main>
   );
 }

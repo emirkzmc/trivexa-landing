@@ -1,9 +1,9 @@
 import Label from "./Label";
-
+import ScrollVelocity from "./ScrollVelocity.tsx";
 export default function AgencyIntroSection() {
   return (
-    <section id="agency-intro" className="min-h-screen scroll-mt-24 bg-[#f8f9fb] px-6 py-24 md:px-20">
-      <div className="mx-auto max-w-5xl">
+    <section id="agency-intro" className="flex flex-col gap-18 min-h-screen scroll-mt-24 bg-[#f8f9fb] px-10 py-18 md:px-48">
+      <div className=" max-w-5xl">
         <Label>TRIVEXA</Label>
         <h2 className="mt-4 text-4xl font-semibold leading-tight text-[#111827] md:text-5xl">
           Yazılım ajansınız: fikri ürüne, ürünü büyümeye dönüştürüyoruz.
@@ -18,6 +18,14 @@ export default function AgencyIntroSection() {
           ürün geliştirin, ister mevcut projenizi bir üst seviyeye taşıyın; Trivexa teknik gücünüz olur.
         </p>
       </div>
+      <div>
+        <ScrollVelocity
+            texts={['Trivexa', 'Solve the Problem,']}
+            velocity={80}
+            className="custom-scroll-text mt-20"
+        />
+      </div>
+
     </section>
   );
 }
