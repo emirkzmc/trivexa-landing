@@ -2,7 +2,7 @@ import Label from "./Label";
 import ScrollVelocity from "./ScrollVelocity.tsx";
 export default function AgencyIntroSection() {
   return (
-    <section id="agency-intro" className="flex flex-col gap-18 min-h-screen scroll-mt-24 bg-[#f8f9fb] px-10 py-18 md:px-48">
+    <section id="agency-intro" className="flex flex-col gap-18 min-h-screen scroll-mt-24 bg-[#f8f9fb] px-10 md:py-20 md:px-48 ">
       <div className=" max-w-5xl">
         <Label>TRIVEXA</Label>
         <h2 className="mt-4 text-4xl font-semibold leading-tight text-[#111827] md:text-5xl">

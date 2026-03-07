@@ -80,8 +80,8 @@ export default function HomeExtraSections() {
       </section>
 
       <section className="bg-[#F8F9FB] px-6 py-24 md:px-20">
-        <div className="mx-auto max-w-6xl rounded-3xl border border-[#e5e7eb] bg-[#111827] p-8 text-white md:p-12">
-          <Label className="text-white/80">Trivexa Etkisi</Label>
+        <div className="mx-auto max-w-6xl rounded-3xl border border-[#e5e7eb] bg-[#7D98AA] p-8 text-white md:p-12">
+          <Label className="text-white">Trivexa Etkisi</Label>
           <h3 className="mt-4 text-3xl font-semibold md:text-4xl">Ürününüzü daha hızlı ve daha doğru büyütün</h3>
           <div className="mt-10 grid gap-6 sm:grid-cols-2 md:grid-cols-4">
             {stats.map((item) => (
