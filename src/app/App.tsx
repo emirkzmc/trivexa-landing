@@ -11,12 +11,14 @@ import CustomerPanelPage, {
   type CustomerPanelPath,
 } from "../features/customer-panel/pages/CustomerPanelPage";
 import CustomerLoginPage from "../features/customer-panel/pages/CustomerLoginPage";
+import PasswordResetPreviewPage from "../features/customer-panel/pages/PasswordResetPreviewPage";
 import type { CustomerPanelSession } from "../features/customer-panel/model/types";
 
 const CUSTOMER_PANEL_SESSION_KEY = "trivexa-landing-customer-session";
 
 type CustomerLoginPath = `/customer-login${string}`;
-type AppPath = NavPath | CustomerPanelPath | CustomerLoginPath;
+type PreviewPath = "/password-reset-preview";
+type AppPath = NavPath | CustomerPanelPath | CustomerLoginPath | PreviewPath;
 
 function normalizePath(pathname: string, search: string): AppPath {
   if (pathname === "/portal/auth/verify") {
@@ -24,6 +26,9 @@ function normalizePath(pathname: string, search: string): AppPath {
   }
   if (pathname.startsWith("/customer-login")) {
     return `${pathname}${search}` as CustomerLoginPath;
+  }
+  if (pathname === "/password-reset-preview") {
+    return "/password-reset-preview";
   }
   if (isCustomerPanelPath(pathname)) {
     return pathname;
@@ -130,6 +135,9 @@ export default function App() {
   };
 
   const currentPage = (() => {
+    if (currentPath === "/password-reset-preview") {
+      return <PasswordResetPreviewPage />;
+    }
     if (isCustomerLoginRoute(currentPath)) {
       return <CustomerLoginPage onLogin={handlePortalLogin} />;
     }
@@ -153,7 +161,11 @@ export default function App() {
     return <HomePage />;
   })();
 
-  if (isCustomerPanelRoute(currentPath) || isCustomerLoginRoute(currentPath)) {
+  if (
+    isCustomerPanelRoute(currentPath)
+    || isCustomerLoginRoute(currentPath)
+    || currentPath === "/password-reset-preview"
+  ) {
     return currentPage;
   }
 
