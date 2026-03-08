@@ -1,5 +1,9 @@
 import { useState, type FormEvent } from "react";
-import type { CreateCustomerTicketInput, CustomerPanelTicket } from "../model/types";
+import type {
+  CreateCustomerTicketInput,
+  CustomerPanelProject,
+  CustomerPanelTicket,
+} from "../model/types";
 import Input from "../../../shared/ui/Input";
 import Button from "../../../shared/ui/Button";
 import TableCard from "./TableCard";
@@ -9,6 +13,7 @@ interface CustomerRequestsSectionProps {
   isLoading: boolean;
   isCreating: boolean;
   errorMessage: string | null;
+  projects: CustomerPanelProject[];
   onCreateTicket: (input: CreateCustomerTicketInput) => Promise<void>;
 }
 
@@ -28,12 +33,14 @@ export default function CustomerRequestsSection({
   isLoading,
   isCreating,
   errorMessage,
+  projects,
   onCreateTicket,
 }: CustomerRequestsSectionProps) {
   const [subject, setSubject] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("MEDIUM");
   const [type, setType] = useState("SUPPORT");
+  const [projectId, setProjectId] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -56,11 +63,13 @@ export default function CustomerRequestsSection({
         description: description.trim(),
         priority,
         type,
+        projectId: projectId || undefined,
       });
       setSubject("");
       setDescription("");
       setPriority("MEDIUM");
       setType("SUPPORT");
+      setProjectId("");
     } catch (error) {
       if (error instanceof Error && error.message) {
         setFormError(error.message);
@@ -73,12 +82,13 @@ export default function CustomerRequestsSection({
   const rows = tickets.length
     ? tickets.map((item) => [
       item.id || "-",
+      item.projectName || "-",
       item.subject || "-",
       prettify(item.priority),
       prettify(item.status),
       formatDate(item.createdAt),
     ])
-    : [["-", "Henuz talep bulunmuyor", "-", "-", "-"]];
+    : [["-", "-", "Henuz talep bulunmuyor", "-", "-", "-"]];
 
   return (
     <div className="space-y-4">
@@ -105,6 +115,19 @@ export default function CustomerRequestsSection({
           />
 
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <select
+              value={projectId}
+              onChange={(event) => setProjectId(event.target.value)}
+              className="h-11 rounded-lg border border-[#d1d5db] bg-white px-3 text-sm text-[#111827] outline-none transition focus:border-[#111827]"
+            >
+              <option value="">Proje Sec (Opsiyonel)</option>
+              {projects.map((project) => (
+                <option key={project.id} value={project.id}>
+                  {project.name}
+                </option>
+              ))}
+            </select>
+
             <select
               value={priority}
               onChange={(event) => setPriority(event.target.value)}
@@ -147,7 +170,7 @@ export default function CustomerRequestsSection({
       ) : (
         <TableCard
           title="Taleplerim"
-          columns={["No", "Baslik", "Oncelik", "Durum", "Tarih"]}
+          columns={["No", "Proje", "Baslik", "Oncelik", "Durum", "Tarih"]}
           rows={rows}
         />
       )}

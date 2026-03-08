@@ -51,9 +51,19 @@ function readStoredSession(): CustomerPanelSession | null {
     if (!raw) return null;
 
     const parsed = JSON.parse(raw) as CustomerPanelSession;
-    if (!parsed?.accessToken) return null;
+    const token = parsed?.accessToken;
+    if (
+      !token
+      || token === "undefined"
+      || token === "null"
+      || typeof token !== "string"
+    ) {
+      window.localStorage.removeItem(CUSTOMER_PANEL_SESSION_KEY);
+      return null;
+    }
     return parsed;
   } catch {
+    window.localStorage.removeItem(CUSTOMER_PANEL_SESSION_KEY);
     return null;
   }
 }

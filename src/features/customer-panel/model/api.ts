@@ -10,6 +10,16 @@ const DEFAULT_API_BASE_URL = "http://localhost:3500/api/v1";
 
 type MaybeWrapped<T> = { data?: T } | T;
 
+export class ApiHttpError extends Error {
+  status: number;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.name = "ApiHttpError";
+    this.status = status;
+  }
+}
+
 interface RawLoginUser {
   id?: unknown;
   firstName?: unknown;
@@ -21,7 +31,9 @@ interface RawLoginUser {
 
 interface RawLoginData {
   accessToken?: unknown;
+  access_token?: unknown;
   refreshToken?: unknown;
+  refresh_token?: unknown;
   user?: RawLoginUser;
 }
 
@@ -34,6 +46,10 @@ interface RawDashboardData {
 
 interface RawTicketData {
   id?: unknown;
+  projectId?: unknown;
+  project_id?: unknown;
+  projectName?: unknown;
+  project_name?: unknown;
   subject?: unknown;
   description?: unknown;
   status?: unknown;
@@ -117,6 +133,8 @@ function normalizeTicket(raw: unknown): CustomerPanelTicket {
   const row = toRecord(raw);
   return {
     id: toStringValue(row.id),
+    projectId: toStringValue(row.projectId || row.project_id) || undefined,
+    projectName: toStringValue(row.projectName || row.project_name) || undefined,
     subject: toStringValue(row.subject),
     description: toStringValue(row.description),
     status: (toStringValue(row.status) || "OPEN").toUpperCase(),
@@ -166,7 +184,7 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
   const payload = text ? (JSON.parse(text) as unknown) : {};
 
   if (!response.ok) {
-    throw new Error(extractErrorMessage(payload));
+    throw new ApiHttpError(response.status, extractErrorMessage(payload));
   }
 
   return payload as T;
@@ -183,8 +201,8 @@ export async function loginCustomerPanel(
   });
 
   const data = unwrapData(payload);
-  const accessToken = toStringValue(data.accessToken);
-  const refreshToken = toStringValue(data.refreshToken);
+  const accessToken = toStringValue(data.accessToken || data.access_token);
+  const refreshToken = toStringValue(data.refreshToken || data.refresh_token);
   const user = toRecord(data.user);
   const firstName = toStringValue(user.firstName).trim();
   const lastName = toStringValue(user.lastName).trim();
@@ -266,6 +284,7 @@ export async function createCustomerTicket(
       description: input.description,
       priority: input.priority || "MEDIUM",
       type: input.type || "SUPPORT",
+      projectId: input.projectId || undefined,
     }),
   });
 

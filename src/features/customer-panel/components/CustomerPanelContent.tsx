@@ -2,6 +2,7 @@ import type {
   CreateCustomerTicketInput,
   CustomerPanelDashboardData,
   CustomerPanelPath,
+  CustomerPanelProject,
   CustomerPanelTicket,
 } from "../model/types";
 import CustomerRequestsSection from "./CustomerRequestsSection";
@@ -17,6 +18,7 @@ interface CustomerPanelContentProps {
   isLoadingTickets: boolean;
   isCreatingTicket: boolean;
   ticketErrorMessage: string | null;
+  projects: CustomerPanelProject[];
   onCreateTicket: (input: CreateCustomerTicketInput) => Promise<void>;
 }
 
@@ -29,6 +31,7 @@ export default function CustomerPanelContent({
   isLoadingTickets,
   isCreatingTicket,
   ticketErrorMessage,
+  projects,
   onCreateTicket,
 }: CustomerPanelContentProps) {
   if (isLoading && !dashboardData) {
@@ -72,6 +75,7 @@ export default function CustomerPanelContent({
         isLoading={isLoadingTickets}
         isCreating={isCreatingTicket}
         errorMessage={ticketErrorMessage}
+        projects={projects}
         onCreateTicket={onCreateTicket}
       />
     );

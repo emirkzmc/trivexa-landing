@@ -35,6 +35,8 @@ export interface CustomerPanelTicket {
   status: string;
   priority: string;
   type: string;
+  projectId?: string;
+  projectName?: string;
   createdAt: string;
 }
 
@@ -43,6 +45,7 @@ export interface CreateCustomerTicketInput {
   description: string;
   priority?: string;
   type?: string;
+  projectId?: string;
 }
 
 export interface CustomerPanelSession {

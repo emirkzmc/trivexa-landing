@@ -3,7 +3,12 @@ import CustomerPanelContent from "../components/CustomerPanelContent";
 import CustomerPanelHeader from "../components/CustomerPanelHeader";
 import CustomerPanelSidebar from "../components/CustomerPanelSidebar";
 import { MOBILE_BREAKPOINT, PAGE_NAMES } from "../model/constants";
-import { createCustomerTicket, getCustomerDashboard, getCustomerTickets } from "../model/api";
+import {
+  ApiHttpError,
+  createCustomerTicket,
+  getCustomerDashboard,
+  getCustomerTickets,
+} from "../model/api";
 import {
   type CreateCustomerTicketInput,
   CUSTOMER_PANEL_PATHS,
@@ -81,6 +86,10 @@ export default function CustomerPanelPage({
         }
       } catch (error) {
         if (!isActive) return;
+        if (error instanceof ApiHttpError && error.status === 401) {
+          onLogout();
+          return;
+        }
 
         if (error instanceof Error && error.message) {
           setErrorMessage(error.message);
@@ -99,7 +108,7 @@ export default function CustomerPanelPage({
     return () => {
       isActive = false;
     };
-  }, [onRequireLogin, session]);
+  }, [onLogout, onRequireLogin, session]);
 
   const fetchTickets = useCallback(async () => {
     if (!session) return;
@@ -110,6 +119,10 @@ export default function CustomerPanelPage({
       const items = await getCustomerTickets(session.accessToken);
       setTickets(items);
     } catch (error) {
+      if (error instanceof ApiHttpError && error.status === 401) {
+        onLogout();
+        return;
+      }
       if (error instanceof Error && error.message) {
         setTicketErrorMessage(error.message);
       } else {
@@ -118,7 +131,7 @@ export default function CustomerPanelPage({
     } finally {
       setIsLoadingTickets(false);
     }
-  }, [session]);
+  }, [onLogout, session]);
 
   useEffect(() => {
     if (currentPath !== "/customer-panel/talepler") return;
@@ -138,6 +151,10 @@ export default function CustomerPanelPage({
         const created = await createCustomerTicket(session.accessToken, input);
         setTickets((prev) => [created, ...prev]);
       } catch (error) {
+        if (error instanceof ApiHttpError && error.status === 401) {
+          onLogout();
+          throw error;
+        }
         if (error instanceof Error && error.message) {
           setTicketErrorMessage(error.message);
         } else {
@@ -148,7 +165,7 @@ export default function CustomerPanelPage({
         setIsCreatingTicket(false);
       }
     },
-    [onRequireLogin, session],
+    [onLogout, onRequireLogin, session],
   );
 
   const pageName = useMemo(() => PAGE_NAMES[currentPath] ?? "Dashboard", [currentPath]);
@@ -215,6 +232,7 @@ export default function CustomerPanelPage({
             isLoadingTickets={isLoadingTickets}
             isCreatingTicket={isCreatingTicket}
             ticketErrorMessage={ticketErrorMessage}
+            projects={dashboardData?.projects ?? []}
             onCreateTicket={handleCreateTicket}
           />
         </main>
