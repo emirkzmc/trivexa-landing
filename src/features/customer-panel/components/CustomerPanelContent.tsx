@@ -57,12 +57,12 @@ export default function CustomerPanelContent({
   if (currentPath === "/customer-panel/projeler") {
     const rows = dashboardData?.projects.length
       ? dashboardData.projects.map((item) => [item.name, item.progress, item.status])
-      : [["-", "Backend'de proje bulunmuyor", "-"]];
+      : [["-", "Aktif projeniz bulunmamaktadır.", "-"]];
 
     return (
       <TableCard
         title="Projelerim"
-        columns={["Proje", "Ilerleme", "Durum"]}
+        columns={["Proje", "İlerleme", "Durum"]}
         rows={rows}
       />
     );
