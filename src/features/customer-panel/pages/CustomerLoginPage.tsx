@@ -48,7 +48,7 @@ export default function CustomerLoginPage({ onLogin }: CustomerLoginPageProps) {
                 </div>
 
                 <div className="flex h-full items-center justify-center px-6 py-10 md:px-12">
-                    <section className="w-full max-w-md p-6 text-center">
+                    <section className="w-full max-w-md p-6 text-center flex flex-col gap-12">
                         <h1 className="text-5xl leading-17 text-[#111827]">Merhaba, seni görmek güzel.</h1>
 
                         {hasMagicToken && (
@@ -64,7 +64,7 @@ export default function CustomerLoginPage({ onLogin }: CustomerLoginPageProps) {
                                     id="username"
                                     name="username"
                                     type="email"
-                                    placeholder="E-posta adresi"
+                                    placeholder="E-posta"
                                     value={email}
                                     onChange={(event) => setEmail(event.target.value)}
                                     autoComplete="email"
@@ -76,7 +76,7 @@ export default function CustomerLoginPage({ onLogin }: CustomerLoginPageProps) {
                                     id="password"
                                     name="password"
                                     type="password"
-                                    placeholder="Sifre"
+                                    placeholder="Şifre"
                                     value={password}
                                     onChange={(event) => setPassword(event.target.value)}
                                     autoComplete="current-password"
