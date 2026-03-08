@@ -32,7 +32,7 @@ export default function CustomerLoginPage({ onLogin }: CustomerLoginPageProps) {
       const session = await loginCustomerPanel(email.trim(), password);
       if (session.forcePasswordChange) {
         if (!session.userId) {
-          setErrorMessage("Sifre degisim adimi icin kullanici bilgisi alinamadi.");
+          setErrorMessage("�?ifre değişim adımı için kullanıcı bilgisi alınamadı.");
           return;
         }
         setPendingForceChange({
@@ -44,7 +44,7 @@ export default function CustomerLoginPage({ onLogin }: CustomerLoginPageProps) {
       }
       onLogin(session);
     } catch (error) {
-      const fallbackMessage = "Giris yapilamadi. Bilgileri kontrol edip tekrar deneyin.";
+      const fallbackMessage = "Giriş yapılamadı. Bilgileri kontrol edip tekrar deneyin.";
       if (error instanceof Error && error.message) {
         setErrorMessage(error.message);
       } else {
@@ -59,7 +59,7 @@ export default function CustomerLoginPage({ onLogin }: CustomerLoginPageProps) {
     if (!pendingForceChange) return;
     const refreshedSession = await loginCustomerPanel(pendingForceChange.email, newPassword);
     if (refreshedSession.forcePasswordChange) {
-      throw new Error("Sifre degisimi tamamlanamadi. Lutfen tekrar deneyin.");
+      throw new Error("�?ifre değişimi tamamlanamadı. Lütfen tekrar deneyin.");
     }
     setPendingForceChange(null);
     onLogin(refreshedSession);
@@ -75,19 +75,19 @@ export default function CustomerLoginPage({ onLogin }: CustomerLoginPageProps) {
         >
           <div className="hidden h-full md:block">
             <p className="absolute mt-15 w-147 translate-x-1/4 translate-y-1/2 text-5xl font-semibold text-white">
-              Geleceginizi insa edelim
+              Geleceğinizi inşa edelim
             </p>
             <p className="absolute bottom-0 mb-4 ml-4 text-4xl font-extralight text-white">TRIVEXA</p>
-            <img src="/Img.png" alt="Login gorseli" className="pointer-events-none h-screen w-full object-cover" />
+            <img src="/Img.png" alt="Login görseli" className="pointer-events-none h-screen w-full object-cover" />
           </div>
 
           <div className="flex h-full items-center justify-center px-6 py-10 md:px-12">
             <section className="flex w-full max-w-md flex-col gap-12 p-6 text-center">
-              <h1 className="text-5xl leading-17 text-[#111827]">Merhaba, seni gormek guzel.</h1>
+              <h1 className="text-5xl leading-17 text-[#111827]">Merhaba, seni görmek güzel.</h1>
 
               {hasMagicToken && (
                 <p className="mt-6 rounded-md border border-[#d1d5db] bg-[#f8fafc] px-4 py-3 text-left text-xs text-[#374151]">
-                  Portal erisim baglantisi algilandi. Devam etmek icin e-posta ve sifrenizle giris yapin.
+                  Portal erişim bağlantısı algılandı. Devam etmek için e-posta ve şifrenizle giriş yapın.
                 </p>
               )}
 
@@ -110,7 +110,7 @@ export default function CustomerLoginPage({ onLogin }: CustomerLoginPageProps) {
                     id="password"
                     name="password"
                     type="password"
-                    placeholder="Sifre"
+                    placeholder="Şifre"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
                     autoComplete="current-password"
@@ -126,7 +126,7 @@ export default function CustomerLoginPage({ onLogin }: CustomerLoginPageProps) {
                 )}
 
                 <Button type="submit" variant="login" disabled={isSubmitting}>
-                  {isSubmitting ? "GIRIS YAPILIYOR..." : "GIRIS"}
+                  {isSubmitting ? "GİRİŞ YAPILIYOR..." : "GİRİŞ"}
                 </Button>
               </form>
             </section>
@@ -140,7 +140,7 @@ export default function CustomerLoginPage({ onLogin }: CustomerLoginPageProps) {
           >
             <div className="w-full max-w-lg" onClick={(event) => event.stopPropagation()}>
               <p className="mb-6 rounded-md border border-[#fde68a] bg-[#fffbeb] px-3 py-2 text-left text-xs text-[#92400e]">
-                Ilk giriste sifrenizi degistirmeniz zorunludur.
+                İlk girişte şifrenizi değiştirmeniz zorunludur.
               </p>
               <PasswordResetModule
                 clientUserId={pendingForceChange.clientUserId}

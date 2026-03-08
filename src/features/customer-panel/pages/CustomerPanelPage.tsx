@@ -71,8 +71,8 @@ export default function CustomerPanelPage({
       onRequireLogin();
       return;
     }
-    const accessToken = activeSession.accessToken;
 
+    const accessToken = activeSession.accessToken;
     let isActive = true;
 
     async function fetchDashboardData() {
@@ -86,6 +86,7 @@ export default function CustomerPanelPage({
         }
       } catch (error) {
         if (!isActive) return;
+
         if (error instanceof ApiHttpError && error.status === 401) {
           onLogout();
           return;
@@ -94,7 +95,7 @@ export default function CustomerPanelPage({
         if (error instanceof Error && error.message) {
           setErrorMessage(error.message);
         } else {
-          setErrorMessage("Panel verileri alinirken bir hata olustu.");
+          setErrorMessage("Panel verileri alınırken bir hata oluştu.");
         }
       } finally {
         if (isActive) {
@@ -115,6 +116,7 @@ export default function CustomerPanelPage({
 
     setIsLoadingTickets(true);
     setTicketErrorMessage(null);
+
     try {
       const items = await getCustomerTickets(session.accessToken);
       setTickets(items);
@@ -123,10 +125,11 @@ export default function CustomerPanelPage({
         onLogout();
         return;
       }
+
       if (error instanceof Error && error.message) {
         setTicketErrorMessage(error.message);
       } else {
-        setTicketErrorMessage("Talepler alinirken bir hata olustu.");
+        setTicketErrorMessage("Talepler alınırken bir hata oluştu.");
       }
     } finally {
       setIsLoadingTickets(false);
@@ -134,7 +137,9 @@ export default function CustomerPanelPage({
   }, [onLogout, session]);
 
   useEffect(() => {
-    if (currentPath !== "/customer-panel/talepler") return;
+    if (currentPath !== "/customer-panel/talepler" && currentPath !== "/customer-panel/onaylar") {
+      return;
+    }
     void fetchTickets();
   }, [currentPath, fetchTickets]);
 
@@ -142,11 +147,12 @@ export default function CustomerPanelPage({
     async (input: CreateCustomerTicketInput) => {
       if (!session) {
         onRequireLogin();
-        throw new Error("Oturum bulunamadi.");
+        throw new Error("Oturum bulunamadı.");
       }
 
       setIsCreatingTicket(true);
       setTicketErrorMessage(null);
+
       try {
         const created = await createCustomerTicket(session.accessToken, input);
         setTickets((prev) => [created, ...prev]);
@@ -155,10 +161,11 @@ export default function CustomerPanelPage({
           onLogout();
           throw error;
         }
+
         if (error instanceof Error && error.message) {
           setTicketErrorMessage(error.message);
         } else {
-          setTicketErrorMessage("Talep olusturulamadi.");
+          setTicketErrorMessage("Talep oluşturulamadı.");
         }
         throw error;
       } finally {
@@ -179,7 +186,7 @@ export default function CustomerPanelPage({
       {isMobile && mobileOpen && (
         <div
           role="button"
-          aria-label="Menuyu kapat"
+          aria-label="Menüyü kapat"
           onClick={() => setMobileOpen(false)}
           onKeyDown={(event) => {
             if (event.key === "Enter" || event.key === " ") {

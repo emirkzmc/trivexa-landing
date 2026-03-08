@@ -20,7 +20,7 @@ export default function ContactSection() {
     setFeedback(null);
 
     if (!form.fullName.trim() || !form.email.trim() || !form.subject.trim() || !form.message.trim()) {
-      setFeedback({ type: "error", text: "Lutfen zorunlu alanlari doldurun." });
+      setFeedback({ type: "error", text: "Lütfen zorunlu alanları doldurun." });
       return;
     }
 
@@ -36,7 +36,7 @@ export default function ContactSection() {
       });
       setFeedback({
         type: "success",
-        text: "Mesajiniz alindi. Ekibimiz en kisa surede sizinle iletisime gececek.",
+        text: "Mesajınız alındı. Ekibimiz en kısa sürede sizinle iletişime geçecek.",
       });
       setForm({
         fullName: "",
@@ -49,7 +49,7 @@ export default function ContactSection() {
     } catch (error) {
       setFeedback({
         type: "error",
-        text: error instanceof Error ? error.message : "Mesaj gonderilemedi. Lutfen tekrar deneyin.",
+        text: error instanceof Error ? error.message : "Mesaj gönderilemedi. Lütfen tekrar deneyin.",
       });
     } finally {
       setIsSubmitting(false);
@@ -60,10 +60,10 @@ export default function ContactSection() {
     <section id="contact-section" className="min-h-screen scroll-mt-24 bg-[#f8f9fb] px-6 py-24 md:px-20">
       <div className="mx-auto max-w-6xl">
         <div className="mb-12">
-          <Label>ILETISIM</Label>
-          <h2 className="mt-4 text-4xl font-semibold leading-tight text-[#111827] md:text-5xl">Projenizi birlikte planlayalim.</h2>
+          <Label>İLETİ�?İM</Label>
+          <h2 className="mt-4 text-4xl font-semibold leading-tight text-[#111827] md:text-5xl">Projenizi birlikte planlayalım.</h2>
           <p className="mt-6 max-w-3xl text-lg leading-8 text-[#374151]">
-            Kisa bir formla ihtiyacinizi aktarin, ekibimiz en kisa surede size donus yapsin.
+            Kısa bir formla ihtiyacınızı aktarın, ekibimiz en kısa sürede size dönüş yapsın.
           </p>
         </div>
 
@@ -71,7 +71,7 @@ export default function ContactSection() {
           <div>
             <img
               src="/contact.png"
-              alt="Iletisim gorseli"
+              alt="İletişim görseli"
               className="w-full rounded-lg border border-[#e5e7eb] object-cover shadow-sm backdrop-blur-2xl"
             />
           </div>
@@ -80,7 +80,7 @@ export default function ContactSection() {
             <form className="flex flex-col gap-5 rounded-2xl md:px-8" onSubmit={handleSubmit}>
               <div className="flex flex-col gap-2">
                 <Label variant="field" htmlFor="name">
-                  Isim
+                  İsim
                 </Label>
                 <Input
                   id="name"
@@ -100,7 +100,7 @@ export default function ContactSection() {
                   id="email"
                   type="email"
                   name="email"
-                  placeholder="ornek@firma.com"
+                  placeholder="örnek@firma.com"
                   value={form.email}
                   onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
                 />
@@ -128,7 +128,7 @@ export default function ContactSection() {
                   id="company"
                   type="text"
                   name="company"
-                  placeholder="Firma adi (opsiyonel)"
+                  placeholder="Firma adı (opsiyonel)"
                   value={form.company}
                   onChange={(event) => setForm((prev) => ({ ...prev, company: event.target.value }))}
                 />
@@ -142,7 +142,7 @@ export default function ContactSection() {
                   id="subject"
                   type="text"
                   name="subject"
-                  placeholder="Kisa konu basligi"
+                  placeholder="Kısa konu başlığı"
                   value={form.subject}
                   onChange={(event) => setForm((prev) => ({ ...prev, subject: event.target.value }))}
                 />
@@ -150,13 +150,13 @@ export default function ContactSection() {
 
               <div className="flex flex-col gap-2">
                 <Label variant="field" htmlFor="description">
-                  Aciklama
+                  Açıklama
                 </Label>
                 <textarea
                   id="description"
                   name="description"
                   rows={6}
-                  placeholder="Proje detaylarini kisaca paylasin..."
+                  placeholder="Proje detaylarını kısaca paylaşın..."
                   className="rounded-xl border border-[#d1d5db] bg-white px-4 py-3 text-[#111827] outline-none transition focus:border-[#111827]"
                   value={form.message}
                   onChange={(event) => setForm((prev) => ({ ...prev, message: event.target.value }))}
@@ -175,7 +175,7 @@ export default function ContactSection() {
                   disabled={isSubmitting}
                   className="rounded-full bg-[#111827] px-8 py-3 text-sm font-medium text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {isSubmitting ? "Gonderiliyor..." : "Gonder"}
+                  {isSubmitting ? "Gönderiliyor..." : "Gönder"}
                 </button>
               </div>
             </form>

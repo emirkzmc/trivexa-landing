@@ -24,17 +24,17 @@ export default function PasswordResetModule({
     setErrorMessage(null);
 
     if (!clientUserId) {
-      setErrorMessage("Client ID bulunamadi. Tekrar giris yapin.");
+      setErrorMessage("Client ID bulunamadı. Tekrar giriş yapın.");
       return;
     }
 
     if (newPassword.length < 8) {
-      setErrorMessage("Yeni sifre en az 8 karakter olmalidir.");
+      setErrorMessage("Yeni şifre en az 8 karakter olmalıdır.");
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setErrorMessage("Sifreler ayni degil.");
+      setErrorMessage("�?ifreler aynı değil.");
       return;
     }
 
@@ -46,7 +46,7 @@ export default function PasswordResetModule({
       if (error instanceof Error && error.message) {
         setErrorMessage(error.message);
       } else {
-        setErrorMessage("Sifre guncellenemedi. Lutfen tekrar deneyin.");
+        setErrorMessage("�?ifre güncellenemedi. Lütfen tekrar deneyin.");
       }
     } finally {
       setIsSubmitting(false);
@@ -56,12 +56,12 @@ export default function PasswordResetModule({
   return (
     <section className=" flex flex-col gap-4 w-full max-w-md  rounded-xl border border-[#d1d5db] bg-white/70  p-8 shadow-sm py-20 ">
       <div  >
-      <h2 className="text-xl font-semibold text-[#111827]">Sifre Yenileme</h2>
-      <p className="mt-2 text-sm text-[#4b5563]">Devam etmek icin yeni sifrenizi belirleyin.</p>
+      <h2 className="text-xl font-semibold text-[#111827]">�?ifre Yenileme</h2>
+      <p className="mt-2 text-sm text-[#4b5563]">Devam etmek için yeni şifrenizi belirleyin.</p>
       </div>
       <form onSubmit={handleSubmit} className="mt-6 space-y-6">
         <label htmlFor="new-password" className="sr-only">
-          Yeni sifre
+          Yeni şifre
         </label>
         <Input
           id="new-password"
@@ -69,13 +69,13 @@ export default function PasswordResetModule({
           value={newPassword}
           onChange={(event) => setNewPassword(event.target.value)}
           className="w-full text-[15px] focus:border-[#111827]"
-          placeholder="Yeni sifre"
+          placeholder="Yeni şifre"
           autoComplete="new-password"
           required
         />
 
         <label htmlFor="confirm-password" className="sr-only">
-          Yeni sifre tekrar
+          Yeni şifre tekrar
         </label>
         <Input
           id="confirm-password"
@@ -83,7 +83,7 @@ export default function PasswordResetModule({
           value={confirmPassword}
           onChange={(event) => setConfirmPassword(event.target.value)}
           className="w-full text-[15px] focus:border-[#111827]"
-          placeholder="Yeni sifre tekrar"
+          placeholder="Yeni şifre tekrar"
           autoComplete="new-password"
           required
         />
@@ -100,7 +100,7 @@ export default function PasswordResetModule({
           disabled={isSubmitting}
           className="mt-0"
         >
-          {isSubmitting ? "ISLENIYOR..." : "SIFREYI GUNCELLE"}
+          {isSubmitting ? "İ�?LENİYOR..." : "�?İFREYİ GÜNCELLE"}
         </Button>
 
         <Button
@@ -109,7 +109,7 @@ export default function PasswordResetModule({
           onClick={onBackToLogin}
           className="w-full bg-transparent px-0 py-0 text-sm text-[#4b5563] underline underline-offset-2"
         >
-          Vazgec
+          Vazgeç
         </Button>
       </form>
     </section>

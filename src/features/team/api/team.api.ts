@@ -48,7 +48,7 @@ function resolveCandidateUrls(): string[] {
 
 export async function fetchTeamByDepartment(): Promise<TeamDepartment[]> {
   const candidateUrls = resolveCandidateUrls();
-  let lastErrorMessage = "Takim bilgileri alinamadi.";
+  let lastErrorMessage = "Takım bilgileri alınamadı.";
 
   for (const url of candidateUrls) {
     try {
@@ -58,7 +58,7 @@ export async function fetchTeamByDepartment(): Promise<TeamDepartment[]> {
       if (!response.ok) {
         const message = typeof (json as { message?: unknown })?.message === "string"
           ? (json as { message: string }).message
-          : `Takim endpointine ulasilamadi (${response.status}).`;
+          : `Takım endpointine ulaşılamadı (${response.status}).`;
         lastErrorMessage = message;
         continue;
       }
@@ -69,7 +69,7 @@ export async function fetchTeamByDepartment(): Promise<TeamDepartment[]> {
 
       return Array.isArray(data?.departments) ? data.departments : [];
     } catch {
-      lastErrorMessage = "Takim endpointine baglanirken ag hatasi olustu.";
+      lastErrorMessage = "Takım endpointine bağlanırken ağ hatası oluştu.";
     }
   }
 

@@ -53,8 +53,13 @@ interface RawTicketData {
   subject?: unknown;
   description?: unknown;
   status?: unknown;
+  approvalStatus?: unknown;
+  approval_status?: unknown;
+  stage?: unknown;
   priority?: unknown;
   type?: unknown;
+  approvedAt?: unknown;
+  approved_at?: unknown;
   createdAt?: unknown;
   created_at?: unknown;
 }
@@ -138,8 +143,11 @@ function normalizeTicket(raw: unknown): CustomerPanelTicket {
     subject: toStringValue(row.subject),
     description: toStringValue(row.description),
     status: (toStringValue(row.status) || "OPEN").toUpperCase(),
+    approvalStatus: (toStringValue(row.approvalStatus || row.approval_status) || "PENDING").toUpperCase(),
+    stage: toStringValue(row.stage).toUpperCase() || undefined,
     priority: (toStringValue(row.priority) || "MEDIUM").toUpperCase(),
     type: (toStringValue(row.type) || "SUPPORT").toUpperCase(),
+    approvedAt: toStringValue(row.approvedAt || row.approved_at) || undefined,
     createdAt: toStringValue(row.createdAt || row.created_at),
   };
 }
@@ -175,7 +183,7 @@ function extractErrorMessage(payload: unknown): string {
     return nested.message;
   }
 
-  return "Istek sirasinda bir hata olustu.";
+  return "İstek sırasında bir hata oluştu.";
 }
 
 async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
@@ -206,10 +214,10 @@ export async function loginCustomerPanel(
   const user = toRecord(data.user);
   const firstName = toStringValue(user.firstName).trim();
   const lastName = toStringValue(user.lastName).trim();
-  const userName = `${firstName} ${lastName}`.trim() || "Musteri";
+  const userName = `${firstName} ${lastName}`.trim() || "Müşteri";
 
   if (!accessToken || !refreshToken) {
-    throw new Error("Giris yaniti gecersiz.");
+    throw new Error("Giriş yanıtı geçersiz.");
   }
 
   return {

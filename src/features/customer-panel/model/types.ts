@@ -33,10 +33,13 @@ export interface CustomerPanelTicket {
   subject: string;
   description: string;
   status: string;
+  approvalStatus: string;
+  stage?: string;
   priority: string;
   type: string;
   projectId?: string;
   projectName?: string;
+  approvedAt?: string;
   createdAt: string;
 }
 

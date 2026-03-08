@@ -29,14 +29,14 @@ export default function TeamSection() {
           setSelectedDepartment("ALL");
           setError(
             data.length === 0
-              ? "Backend endpointi personel verisi dondurmedi."
+              ? "Backend endpointi personel verisi döndürmedi."
               : null,
           );
         }
       } catch (err) {
         if (isMounted) {
           setDepartments([]);
-          setError(err instanceof Error ? err.message : "Takim bilgileri alinamadi.");
+          setError(err instanceof Error ? err.message : "Takım bilgileri alınamadı.");
         }
       } finally {
         if (isMounted) {
@@ -69,31 +69,25 @@ export default function TeamSection() {
   return (
     <section
       id="team-section"
-      className="min-h-screen scroll-mt-24 bg-[radial-gradient(circle_at_top_right,_#fdf2f8_0%,_#ffffff_45%),radial-gradient(circle_at_bottom_left,_#f0f9ff_0%,_#ffffff_45%)] px-6 py-24 md:px-20"
+      className="min-h-screen scroll-mt-24 bg-white px-6 py-24 md:px-20"
     >
       <div className="mx-auto max-w-6xl">
         <Label>TAKIM</Label>
         <div className="mt-4 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <h2 className="max-w-3xl text-4xl font-semibold leading-tight text-[#111827] md:text-5xl">
-            Departman bazli, uzmanlik odakli Trivexa ekibi.
+            Uzman kadro, net sonuç.
           </h2>
-          <p className="max-w-xl text-base leading-7 text-[#4b5563]">
-            Takim verisi backend uzerinden canli gelir. Her uye rol ve departmanina gore listelenir.
-          </p>
+
         </div>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+        <div className="mt-10 grid gap-4 sm:grid-cols-2">
           <article className="rounded-2xl border border-[#e5e7eb] bg-white/80 p-5 backdrop-blur">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#6b7280]">Toplam Uye</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#6b7280]">Toplam Üye</p>
             <p className="mt-2 text-3xl font-semibold text-[#111827]">{isLoading ? "..." : totalMembers}</p>
           </article>
           <article className="rounded-2xl border border-[#e5e7eb] bg-white/80 p-5 backdrop-blur">
             <p className="text-xs font-semibold uppercase tracking-wide text-[#6b7280]">Departman</p>
             <p className="mt-2 text-3xl font-semibold text-[#111827]">{isLoading ? "..." : departments.length}</p>
-          </article>
-          <article className="rounded-2xl border border-[#e5e7eb] bg-white/80 p-5 backdrop-blur">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#6b7280]">Kaynak</p>
-            <p className="mt-2 text-lg font-semibold text-[#111827]">Backend /landing/team</p>
           </article>
         </div>
 
@@ -104,11 +98,11 @@ export default function TeamSection() {
               onClick={() => setSelectedDepartment("ALL")}
               className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
                 selectedDepartment === "ALL"
-                  ? "border-[#111827] bg-[#111827] text-white"
+                  ? "border-[#111827] bg-white text-[#111827]"
                   : "border-[#d1d5db] bg-white text-[#374151] hover:border-[#9ca3af]"
               }`}
             >
-              Tum Departmanlar
+              Tüm Departmanlar
             </button>
             {departments.map((department) => (
               <button
@@ -117,7 +111,7 @@ export default function TeamSection() {
                 onClick={() => setSelectedDepartment(department.department)}
                 className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
                   selectedDepartment === department.department
-                    ? "border-[#111827] bg-[#111827] text-white"
+                    ? "border-[#111827] bg-white text-[#111827]"
                     : "border-[#d1d5db] bg-white text-[#374151] hover:border-[#9ca3af]"
                 }`}
               >
@@ -155,7 +149,7 @@ export default function TeamSection() {
 
           {!isLoading && departments.length > 0 && visibleDepartments.length === 0 && (
             <div className="rounded-2xl border border-[#e5e7eb] bg-white p-6 text-sm text-[#4b5563]">
-              Secilen filtrede gosterilecek personel bulunamadi.
+              Seçilen filtrede gösterilecek personel bulunamadı.
             </div>
           )}
 
@@ -164,7 +158,7 @@ export default function TeamSection() {
               <div className="flex items-center justify-between gap-4 border-b border-[#f3f4f6] pb-4">
                 <h3 className="text-xl font-semibold text-[#111827]">{formatLabel(department.department)}</h3>
                 <span className="rounded-full bg-[#f3f4f6] px-3 py-1 text-xs font-semibold text-[#4b5563]">
-                  {department.members.length} uye
+                  {department.members.length} üye
                 </span>
               </div>
 

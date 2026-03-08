@@ -42,7 +42,7 @@ export async function submitLandingContactForm(
   if (!response.ok) {
     const message = typeof (json as { message?: unknown })?.message === 'string'
       ? (json as { message: string }).message
-      : 'Iletisim formu gonderilemedi.';
+      : 'İletişim formu gönderilemedi.';
     throw new Error(message);
   }
 

@@ -8,14 +8,14 @@ export default function DashboardStats({ dashboardData }: DashboardStatsProps) {
   if (!dashboardData) {
     return (
       <section className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
-        Dashboard verisi backend'den henuz alinmadi.
+        Dashboard verisi backend'den henüz alınmadı.
       </section>
     );
   }
 
   const stats = [
     { label: "Aktif Proje", value: String(dashboardData.activeProjects) },
-    { label: "Acik Talep", value: String(dashboardData.unreadTickets) },
+    { label: "Açık Talep", value: String(dashboardData.unreadTickets) },
     { label: "Onay Bekleyen", value: String(dashboardData.pendingInvoices) },
     { label: "Toplam Proje", value: String(dashboardData.projects.length) },
   ];

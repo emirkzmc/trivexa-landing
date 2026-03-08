@@ -7,6 +7,7 @@ import type {
 } from "../model/types";
 import CustomerRequestsSection from "./CustomerRequestsSection";
 import DashboardStats from "./DashboardStats";
+import PendingApprovalsSection from "./PendingApprovalsSection";
 import TableCard from "./TableCard";
 
 interface CustomerPanelContentProps {
@@ -37,7 +38,7 @@ export default function CustomerPanelContent({
   if (isLoading && !dashboardData) {
     return (
       <section className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
-        Panel verileri yukleniyor...
+        Panel verileri yükleniyor...
       </section>
     );
   }
@@ -57,7 +58,7 @@ export default function CustomerPanelContent({
   if (currentPath === "/customer-panel/projeler") {
     const rows = dashboardData?.projects.length
       ? dashboardData.projects.map((item) => [item.name, item.progress, item.status])
-      : [["-", "Aktif projeniz bulunmamaktadır.", "-"]];
+      : [["-", "Backend'de proje bulunmuyor", "-"]];
 
     return (
       <TableCard
@@ -81,17 +82,28 @@ export default function CustomerPanelContent({
     );
   }
 
+  if (currentPath === "/customer-panel/onaylar") {
+    return (
+      <PendingApprovalsSection
+        pendingInvoices={dashboardData?.pendingInvoices ?? 0}
+        requests={tickets}
+        isLoading={isLoadingTickets}
+        errorMessage={ticketErrorMessage}
+      />
+    );
+  }
+
   if (currentPath === "/customer-panel/notlar") {
     return (
       <section className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
-        Gorusme Notlari icin musteri portali endpoint'i henuz tanimli degil.
+        Görüşme Notları için müşteri portalı endpoint'i henüz tanımlı değil.
       </section>
     );
   }
 
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
-      Onay Bekleyen icin musteri portali endpoint'i henuz tanimli degil.
+      İçerik bulunamadı.
     </section>
   );
 }
