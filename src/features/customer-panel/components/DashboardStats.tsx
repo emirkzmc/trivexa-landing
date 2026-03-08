@@ -1,4 +1,3 @@
-import { DASHBOARD_STATS } from "../model/constants";
 import type { CustomerPanelDashboardData } from "../model/types";
 
 interface DashboardStatsProps {
@@ -6,14 +5,20 @@ interface DashboardStatsProps {
 }
 
 export default function DashboardStats({ dashboardData }: DashboardStatsProps) {
-  const stats = dashboardData
-    ? [
-      { label: "Aktif Proje", value: String(dashboardData.activeProjects) },
-      { label: "Acik Talep", value: String(dashboardData.unreadTickets) },
-      { label: "Onay Bekleyen", value: String(dashboardData.pendingInvoices) },
-      { label: "Toplam Proje", value: String(dashboardData.projects.length) },
-    ]
-    : DASHBOARD_STATS;
+  if (!dashboardData) {
+    return (
+      <section className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+        Dashboard verisi backend'den henuz alinmadi.
+      </section>
+    );
+  }
+
+  const stats = [
+    { label: "Aktif Proje", value: String(dashboardData.activeProjects) },
+    { label: "Acik Talep", value: String(dashboardData.unreadTickets) },
+    { label: "Onay Bekleyen", value: String(dashboardData.pendingInvoices) },
+    { label: "Toplam Proje", value: String(dashboardData.projects.length) },
+  ];
 
   return (
     <section

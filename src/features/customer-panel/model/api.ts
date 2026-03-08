@@ -1,7 +1,9 @@
 import type {
+  CreateCustomerTicketInput,
   CustomerPanelDashboardData,
   CustomerPanelProject,
   CustomerPanelSession,
+  CustomerPanelTicket,
 } from "./types";
 
 const DEFAULT_API_BASE_URL = "http://localhost:3500/api/v1";
@@ -28,6 +30,17 @@ interface RawDashboardData {
   projects?: unknown;
   pendingInvoices?: unknown;
   unreadTickets?: unknown;
+}
+
+interface RawTicketData {
+  id?: unknown;
+  subject?: unknown;
+  description?: unknown;
+  status?: unknown;
+  priority?: unknown;
+  type?: unknown;
+  createdAt?: unknown;
+  created_at?: unknown;
 }
 
 function resolveApiBaseUrl() {
@@ -98,6 +111,37 @@ function normalizeProject(raw: unknown): CustomerPanelProject {
     status,
     progress: statusToProgress(status),
   };
+}
+
+function normalizeTicket(raw: unknown): CustomerPanelTicket {
+  const row = toRecord(raw);
+  return {
+    id: toStringValue(row.id),
+    subject: toStringValue(row.subject),
+    description: toStringValue(row.description),
+    status: (toStringValue(row.status) || "OPEN").toUpperCase(),
+    priority: (toStringValue(row.priority) || "MEDIUM").toUpperCase(),
+    type: (toStringValue(row.type) || "SUPPORT").toUpperCase(),
+    createdAt: toStringValue(row.createdAt || row.created_at),
+  };
+}
+
+function extractTicketRows(payload: unknown): unknown[] {
+  const first = unwrapData(payload as MaybeWrapped<unknown>);
+  if (Array.isArray(first)) return first;
+
+  const firstRecord = toRecord(first);
+  if (Array.isArray(firstRecord.items)) return firstRecord.items;
+  if (Array.isArray(firstRecord.data)) return firstRecord.data;
+
+  const nested = unwrapData(first as MaybeWrapped<unknown>);
+  if (Array.isArray(nested)) return nested;
+
+  const nestedRecord = toRecord(nested);
+  if (Array.isArray(nestedRecord.items)) return nestedRecord.items;
+  if (Array.isArray(nestedRecord.data)) return nestedRecord.data;
+
+  return [];
 }
 
 function extractErrorMessage(payload: unknown): string {
@@ -194,4 +238,37 @@ export async function getCustomerDashboard(
     unreadTickets: toNumberValue(data.unreadTickets),
     projects,
   };
+}
+
+export async function getCustomerTickets(accessToken: string): Promise<CustomerPanelTicket[]> {
+  const payload = await requestJson<unknown>("/portal/requests", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  const rows = extractTicketRows(payload);
+  return rows.map((item) => normalizeTicket(item as RawTicketData));
+}
+
+export async function createCustomerTicket(
+  accessToken: string,
+  input: CreateCustomerTicketInput,
+): Promise<CustomerPanelTicket> {
+  const payload = await requestJson<unknown>("/portal/requests", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      subject: input.subject,
+      description: input.description,
+      priority: input.priority || "MEDIUM",
+      type: input.type || "SUPPORT",
+    }),
+  });
+
+  const data = unwrapData(payload as MaybeWrapped<unknown>);
+  return normalizeTicket(data as RawTicketData);
 }

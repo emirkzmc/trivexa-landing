@@ -28,6 +28,23 @@ export interface CustomerPanelDashboardData {
   projects: CustomerPanelProject[];
 }
 
+export interface CustomerPanelTicket {
+  id: string;
+  subject: string;
+  description: string;
+  status: string;
+  priority: string;
+  type: string;
+  createdAt: string;
+}
+
+export interface CreateCustomerTicketInput {
+  subject: string;
+  description: string;
+  priority?: string;
+  type?: string;
+}
+
 export interface CustomerPanelSession {
   accessToken: string;
   refreshToken: string;

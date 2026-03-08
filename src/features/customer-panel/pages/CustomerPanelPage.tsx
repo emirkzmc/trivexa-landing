@@ -1,14 +1,16 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import CustomerPanelContent from "../components/CustomerPanelContent";
 import CustomerPanelHeader from "../components/CustomerPanelHeader";
 import CustomerPanelSidebar from "../components/CustomerPanelSidebar";
 import { MOBILE_BREAKPOINT, PAGE_NAMES } from "../model/constants";
-import { getCustomerDashboard } from "../model/api";
+import { createCustomerTicket, getCustomerDashboard, getCustomerTickets } from "../model/api";
 import {
+  type CreateCustomerTicketInput,
   CUSTOMER_PANEL_PATHS,
   type CustomerPanelDashboardData,
   type CustomerPanelPath,
   type CustomerPanelSession,
+  type CustomerPanelTicket,
 } from "../model/types";
 
 export { CUSTOMER_PANEL_DEFAULT_PATH } from "../model/constants";
@@ -39,6 +41,10 @@ export default function CustomerPanelPage({
   const [dashboardData, setDashboardData] = useState<CustomerPanelDashboardData | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [tickets, setTickets] = useState<CustomerPanelTicket[]>([]);
+  const [isLoadingTickets, setIsLoadingTickets] = useState(false);
+  const [isCreatingTicket, setIsCreatingTicket] = useState(false);
+  const [ticketErrorMessage, setTicketErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -94,6 +100,56 @@ export default function CustomerPanelPage({
       isActive = false;
     };
   }, [onRequireLogin, session]);
+
+  const fetchTickets = useCallback(async () => {
+    if (!session) return;
+
+    setIsLoadingTickets(true);
+    setTicketErrorMessage(null);
+    try {
+      const items = await getCustomerTickets(session.accessToken);
+      setTickets(items);
+    } catch (error) {
+      if (error instanceof Error && error.message) {
+        setTicketErrorMessage(error.message);
+      } else {
+        setTicketErrorMessage("Talepler alinirken bir hata olustu.");
+      }
+    } finally {
+      setIsLoadingTickets(false);
+    }
+  }, [session]);
+
+  useEffect(() => {
+    if (currentPath !== "/customer-panel/talepler") return;
+    void fetchTickets();
+  }, [currentPath, fetchTickets]);
+
+  const handleCreateTicket = useCallback(
+    async (input: CreateCustomerTicketInput) => {
+      if (!session) {
+        onRequireLogin();
+        throw new Error("Oturum bulunamadi.");
+      }
+
+      setIsCreatingTicket(true);
+      setTicketErrorMessage(null);
+      try {
+        const created = await createCustomerTicket(session.accessToken, input);
+        setTickets((prev) => [created, ...prev]);
+      } catch (error) {
+        if (error instanceof Error && error.message) {
+          setTicketErrorMessage(error.message);
+        } else {
+          setTicketErrorMessage("Talep olusturulamadi.");
+        }
+        throw error;
+      } finally {
+        setIsCreatingTicket(false);
+      }
+    },
+    [onRequireLogin, session],
+  );
 
   const pageName = useMemo(() => PAGE_NAMES[currentPath] ?? "Dashboard", [currentPath]);
 
@@ -155,6 +211,11 @@ export default function CustomerPanelPage({
             dashboardData={dashboardData}
             isLoading={isLoadingData}
             errorMessage={errorMessage}
+            tickets={tickets}
+            isLoadingTickets={isLoadingTickets}
+            isCreatingTicket={isCreatingTicket}
+            ticketErrorMessage={ticketErrorMessage}
+            onCreateTicket={handleCreateTicket}
           />
         </main>
       </div>

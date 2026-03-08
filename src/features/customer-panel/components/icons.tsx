@@ -14,10 +14,8 @@ export function SquareGridIcon({ color = "#111827" }: { color?: string }) {
 export function DashboardIcon({ color = "currentColor" }: { color?: string }) {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="3" y="3" width="8" height="8" rx="1.5" stroke={color} strokeWidth="1.8" />
-      <rect x="13" y="3" width="8" height="5" rx="1.5" stroke={color} strokeWidth="1.8" />
-      <rect x="13" y="10" width="8" height="11" rx="1.5" stroke={color} strokeWidth="1.8" />
-      <rect x="3" y="13" width="8" height="8" rx="1.5" stroke={color} strokeWidth="1.8" />
+      <path d="M3 3v18h18" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M18 17V9M13 17V5M8 17v-3" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   );
 }
@@ -26,10 +24,13 @@ export function FolderIcon({ color = "currentColor" }: { color?: string }) {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
-        d="M3 7.5A2.5 2.5 0 0 1 5.5 5h4.2l1.8 2h7A2.5 2.5 0 0 1 21 9.5v8A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5z"
+        d="M3 6.5A2.5 2.5 0 0 1 5.5 4h4.4l1.7 2.2h6.9A2.5 2.5 0 0 1 21 8.7v9.8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5z"
         stroke={color}
         strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
+      <path d="M8 11h2.2M8 14h2.2M13.5 11h2.2M13.5 14h2.2" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   );
 }
@@ -37,10 +38,10 @@ export function FolderIcon({ color = "currentColor" }: { color?: string }) {
 export function ListIcon({ color = "currentColor" }: { color?: string }) {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <circle cx="5" cy="6" r="1.5" fill={color} />
-      <circle cx="5" cy="12" r="1.5" fill={color} />
-      <circle cx="5" cy="18" r="1.5" fill={color} />
-      <path d="M9 6h10M9 12h10M9 18h10" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M9 4H7a2 2 0 0 0-2 2v1" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9 20H7a2 2 0 0 1-2-2v-1" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="9.5" y="3.5" width="11" height="17" rx="2" stroke={color} strokeWidth="1.8" />
+      <path d="M12.5 8h5M12.5 12h5M12.5 16h5" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   );
 }
@@ -50,7 +51,7 @@ export function CheckIcon({ color = "currentColor" }: { color?: string }) {
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <rect x="3" y="3" width="18" height="18" rx="3" stroke={color} strokeWidth="1.8" />
       <path
-        d="m8 12 2.5 2.5L16 9"
+        d="m7.5 12 3 3 6-6"
         stroke={color}
         strokeWidth="1.8"
         strokeLinecap="round"
