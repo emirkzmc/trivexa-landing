@@ -9,10 +9,12 @@ const DEFAULT_API_BASE_URL = "http://localhost:3500/api/v1";
 type MaybeWrapped<T> = { data?: T } | T;
 
 interface RawLoginUser {
+  id?: unknown;
   firstName?: unknown;
   lastName?: unknown;
   email?: unknown;
   role?: unknown;
+  forcePasswordChange?: unknown;
 }
 
 interface RawLoginData {
@@ -53,6 +55,16 @@ function toNumberValue(value: unknown): number {
     return Number.isFinite(parsed) ? parsed : 0;
   }
   return 0;
+}
+
+function toBooleanValue(value: unknown): boolean {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    return normalized === "true" || normalized === "1";
+  }
+  if (typeof value === "number") return value === 1;
+  return false;
 }
 
 function unwrapData<T>(payload: MaybeWrapped<T>): T {
@@ -141,10 +153,26 @@ export async function loginCustomerPanel(
   return {
     accessToken,
     refreshToken,
+    userId: toStringValue(user.id),
     userName,
     userEmail: toStringValue(user.email),
     role: toStringValue(user.role) || "CLIENT",
+    forcePasswordChange: toBooleanValue(user.forcePasswordChange),
   };
+}
+
+export async function forceChangeCustomerPassword(
+  clientUserId: string,
+  newPassword: string,
+): Promise<void> {
+  await requestJson("/portal/force-change-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      clientId: clientUserId,
+      newPassword,
+    }),
+  });
 }
 
 export async function getCustomerDashboard(

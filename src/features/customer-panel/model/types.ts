@@ -31,7 +31,9 @@ export interface CustomerPanelDashboardData {
 export interface CustomerPanelSession {
   accessToken: string;
   refreshToken: string;
+  userId: string;
   userName: string;
   userEmail: string;
   role: string;
+  forcePasswordChange: boolean;
 }
