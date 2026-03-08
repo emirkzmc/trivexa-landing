@@ -1,5 +1,5 @@
-import Label from "./Label";
-import ScrollVelocity from "./ScrollVelocity.tsx";
+import Label from "../../../shared/ui/Label";
+import ScrollVelocity from "../../../shared/ui/ScrollVelocity";
 export default function AgencyIntroSection() {
   return (
     <section id="agency-intro" className="flex flex-col gap-18 min-h-screen scroll-mt-24 bg-[#f8f9fb] px-10 md:py-20 md:px-48 ">

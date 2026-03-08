@@ -1,4 +1,4 @@
-import Label from "./Label";
+import Label from "../../../shared/ui/Label";
 
 export default function TeamSection() {
   return (

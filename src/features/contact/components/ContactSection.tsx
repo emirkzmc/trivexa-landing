@@ -1,5 +1,5 @@
-import Input from "./Input";
-import Label from "./Label";
+import Input from "../../../shared/ui/Input";
+import Label from "../../../shared/ui/Label";
 
 export default function ContactSection() {
   return (

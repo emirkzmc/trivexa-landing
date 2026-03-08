@@ -1,4 +1,4 @@
-import Label from "./Label";
+import Label from "../../../shared/ui/Label";
 
 const services = [
   {

@@ -22,7 +22,7 @@ export default function Navbar({ currentPath, isScrolled, onNavigate }: NavbarPr
       }`}
     >
       <nav className="mx-auto flex h-20 max-w-350 items-center justify-between px-8 md:px-12">
-        <button type="button" onClick={() => onNavigate("/")} className={`text-xl font-semibold tracking-[0.12em] ${textColorClass}`}>
+        <button type="button" onClick={() => onNavigate("/")} className={`text-2xl  tracking-[0.12em] ${textColorClass}`}>
           TRIVEXA
         </button>
         <ul className={`flex items-center gap-8 text-sm font-medium md:text-base ${textColorClass}`}>
