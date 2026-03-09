@@ -1,10 +1,12 @@
 import type {
   CreateCustomerTicketInput,
+  CustomerMeetingNote,
   CustomerPanelDashboardData,
   CustomerPanelPath,
   CustomerPanelProject,
   CustomerPanelTicket,
 } from "../model/types";
+import CustomerMeetingNotesSection from "./CustomerMeetingNotesSection";
 import CustomerRequestsSection from "./CustomerRequestsSection";
 import DashboardStats from "./DashboardStats";
 import PendingApprovalsSection from "./PendingApprovalsSection";
@@ -19,8 +21,44 @@ interface CustomerPanelContentProps {
   isLoadingTickets: boolean;
   isCreatingTicket: boolean;
   ticketErrorMessage: string | null;
+  meetingNotes: CustomerMeetingNote[];
+  isLoadingMeetingNotes: boolean;
+  meetingNotesErrorMessage: string | null;
+  isLoadingMeetingRequests: boolean;
+  meetingRequestsErrorMessage: string | null;
+  isCreatingMeetingRequest: boolean;
+  meetingRequestErrorMessage: string | null;
+  selectedMeetingProjectId: string;
   projects: CustomerPanelProject[];
+  onMeetingProjectChange: (projectId: string) => void;
+  onCreateMeetingRequest: (input: CreateCustomerTicketInput) => Promise<void>;
   onCreateTicket: (input: CreateCustomerTicketInput) => Promise<void>;
+}
+
+function normalizeForMeetingMatch(value: string): string {
+  return (value || "")
+    .toLowerCase()
+    .replace(/\u011f/g, "g")
+    .replace(/\u00fc/g, "u")
+    .replace(/\u015f/g, "s")
+    .replace(/\u0131/g, "i")
+    .replace(/\u00f6/g, "o")
+    .replace(/\u00e7/g, "c")
+    .replace(/ğ/g, "g")
+    .replace(/ü/g, "u")
+    .replace(/ş/g, "s")
+    .replace(/ı/g, "i")
+    .replace(/ö/g, "o")
+    .replace(/ç/g, "c")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function isMeetingRequest(subject: string, type: string): boolean {
+  if ((type || "").toUpperCase() !== "OTHER") return false;
+  return normalizeForMeetingMatch(subject).startsWith("gorusme talebi");
 }
 
 export default function CustomerPanelContent({
@@ -32,13 +70,26 @@ export default function CustomerPanelContent({
   isLoadingTickets,
   isCreatingTicket,
   ticketErrorMessage,
+  meetingNotes,
+  isLoadingMeetingNotes,
+  meetingNotesErrorMessage,
+  isLoadingMeetingRequests,
+  meetingRequestsErrorMessage,
+  isCreatingMeetingRequest,
+  meetingRequestErrorMessage,
+  selectedMeetingProjectId,
   projects,
+  onMeetingProjectChange,
+  onCreateMeetingRequest,
   onCreateTicket,
 }: CustomerPanelContentProps) {
+  const supportTickets = tickets.filter((item) => !isMeetingRequest(item.subject, item.type));
+  const meetingRequestTickets = tickets.filter((item) => isMeetingRequest(item.subject, item.type));
+
   if (isLoading && !dashboardData) {
     return (
       <section className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
-        Panel verileri yükleniyor...
+        Panel verileri yukleniyor...
       </section>
     );
   }
@@ -63,7 +114,7 @@ export default function CustomerPanelContent({
     return (
       <TableCard
         title="Projelerim"
-        columns={["Proje", "İlerleme", "Durum"]}
+        columns={["Proje", "Ilerleme", "Durum"]}
         rows={rows}
       />
     );
@@ -72,7 +123,7 @@ export default function CustomerPanelContent({
   if (currentPath === "/customer-panel/talepler") {
     return (
       <CustomerRequestsSection
-        tickets={tickets}
+        tickets={supportTickets}
         isLoading={isLoadingTickets}
         isCreating={isCreatingTicket}
         errorMessage={ticketErrorMessage}
@@ -86,7 +137,7 @@ export default function CustomerPanelContent({
     return (
       <PendingApprovalsSection
         pendingInvoices={dashboardData?.pendingInvoices ?? 0}
-        requests={tickets}
+        requests={supportTickets}
         isLoading={isLoadingTickets}
         errorMessage={ticketErrorMessage}
       />
@@ -95,15 +146,27 @@ export default function CustomerPanelContent({
 
   if (currentPath === "/customer-panel/notlar") {
     return (
-      <section className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
-        Görüşme Notları için müşteri portalı endpoint'i henüz tanımlı değil.
-      </section>
+      <CustomerMeetingNotesSection
+        meetingNotes={meetingNotes}
+        isLoading={isLoadingMeetingNotes}
+        errorMessage={meetingNotesErrorMessage}
+        meetingRequests={meetingRequestTickets}
+        isLoadingMeetingRequests={isLoadingMeetingRequests}
+        meetingRequestsErrorMessage={meetingRequestsErrorMessage}
+        isCreatingMeetingRequest={isCreatingMeetingRequest}
+        meetingRequestErrorMessage={meetingRequestErrorMessage}
+        projects={projects}
+        selectedProjectId={selectedMeetingProjectId}
+        onProjectChange={onMeetingProjectChange}
+        onCreateMeetingRequest={onCreateMeetingRequest}
+      />
     );
   }
 
   return (
     <section className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
-      İçerik bulunamadı.
+      Icerik bulunamadi.
     </section>
   );
 }
+

@@ -7,11 +7,13 @@ import {
   ApiHttpError,
   createCustomerTicket,
   getCustomerDashboard,
+  getCustomerMeetingNotes,
   getCustomerTickets,
 } from "../model/api";
 import {
   type CreateCustomerTicketInput,
   CUSTOMER_PANEL_PATHS,
+  type CustomerMeetingNote,
   type CustomerPanelDashboardData,
   type CustomerPanelPath,
   type CustomerPanelSession,
@@ -46,10 +48,18 @@ export default function CustomerPanelPage({
   const [dashboardData, setDashboardData] = useState<CustomerPanelDashboardData | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const [tickets, setTickets] = useState<CustomerPanelTicket[]>([]);
   const [isLoadingTickets, setIsLoadingTickets] = useState(false);
   const [isCreatingTicket, setIsCreatingTicket] = useState(false);
   const [ticketErrorMessage, setTicketErrorMessage] = useState<string | null>(null);
+  const [isCreatingMeetingRequest, setIsCreatingMeetingRequest] = useState(false);
+  const [meetingRequestErrorMessage, setMeetingRequestErrorMessage] = useState<string | null>(null);
+
+  const [meetingNotes, setMeetingNotes] = useState<CustomerMeetingNote[]>([]);
+  const [isLoadingMeetingNotes, setIsLoadingMeetingNotes] = useState(false);
+  const [meetingNotesErrorMessage, setMeetingNotesErrorMessage] = useState<string | null>(null);
+  const [selectedMeetingProjectId, setSelectedMeetingProjectId] = useState("");
 
   useEffect(() => {
     const handleResize = () => {
@@ -95,7 +105,7 @@ export default function CustomerPanelPage({
         if (error instanceof Error && error.message) {
           setErrorMessage(error.message);
         } else {
-          setErrorMessage("Panel verileri alınırken bir hata oluştu.");
+          setErrorMessage("Panel verileri alinirken bir hata olustu.");
         }
       } finally {
         if (isActive) {
@@ -129,7 +139,7 @@ export default function CustomerPanelPage({
       if (error instanceof Error && error.message) {
         setTicketErrorMessage(error.message);
       } else {
-        setTicketErrorMessage("Talepler alınırken bir hata oluştu.");
+        setTicketErrorMessage("Talepler alinirken bir hata olustu.");
       }
     } finally {
       setIsLoadingTickets(false);
@@ -137,17 +147,76 @@ export default function CustomerPanelPage({
   }, [onLogout, session]);
 
   useEffect(() => {
-    if (currentPath !== "/customer-panel/talepler" && currentPath !== "/customer-panel/onaylar") {
+    if (
+      currentPath !== "/customer-panel/talepler"
+      && currentPath !== "/customer-panel/onaylar"
+      && currentPath !== "/customer-panel/notlar"
+    ) {
       return;
     }
     void fetchTickets();
   }, [currentPath, fetchTickets]);
 
+  const fetchMeetingNotes = useCallback(async (options?: { silent?: boolean }) => {
+    if (!session) return;
+
+    const resolvedClientId = dashboardData?.clientId || session.userId;
+
+    if (!options?.silent) {
+      setIsLoadingMeetingNotes(true);
+      setMeetingNotesErrorMessage(null);
+    }
+
+    try {
+      const items = await getCustomerMeetingNotes(session.accessToken, {
+        clientId: resolvedClientId || undefined,
+        projectId: selectedMeetingProjectId || undefined,
+      });
+      setMeetingNotes(items);
+    } catch (error) {
+      if (error instanceof ApiHttpError && error.status === 401) {
+        onLogout();
+        return;
+      }
+
+      if (error instanceof Error && error.message) {
+        setMeetingNotesErrorMessage(error.message);
+      } else {
+        setMeetingNotesErrorMessage("Gorusme notlari alinirken bir hata olustu.");
+      }
+    } finally {
+      if (!options?.silent) {
+        setIsLoadingMeetingNotes(false);
+      }
+    }
+  }, [dashboardData?.clientId, onLogout, selectedMeetingProjectId, session]);
+
+  useEffect(() => {
+    if (currentPath !== "/customer-panel/notlar") {
+      return;
+    }
+    void fetchMeetingNotes();
+  }, [currentPath, fetchMeetingNotes]);
+
+  useEffect(() => {
+    if (currentPath !== "/customer-panel/notlar") {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      void fetchMeetingNotes({ silent: true });
+    }, 20_000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [currentPath, fetchMeetingNotes]);
+
   const handleCreateTicket = useCallback(
     async (input: CreateCustomerTicketInput) => {
       if (!session) {
         onRequireLogin();
-        throw new Error("Oturum bulunamadı.");
+        throw new Error("Oturum bulunamadi.");
       }
 
       setIsCreatingTicket(true);
@@ -165,11 +234,46 @@ export default function CustomerPanelPage({
         if (error instanceof Error && error.message) {
           setTicketErrorMessage(error.message);
         } else {
-          setTicketErrorMessage("Talep oluşturulamadı.");
+          setTicketErrorMessage("Talep olusturulamadi.");
         }
         throw error;
       } finally {
         setIsCreatingTicket(false);
+      }
+    },
+    [onLogout, onRequireLogin, session],
+  );
+
+  const handleCreateMeetingRequest = useCallback(
+    async (input: CreateCustomerTicketInput) => {
+      if (!session) {
+        onRequireLogin();
+        throw new Error("Oturum bulunamadi.");
+      }
+
+      setIsCreatingMeetingRequest(true);
+      setMeetingRequestErrorMessage(null);
+
+      try {
+        const created = await createCustomerTicket(session.accessToken, {
+          ...input,
+          type: "OTHER",
+        });
+        setTickets((prev) => [created, ...prev]);
+      } catch (error) {
+        if (error instanceof ApiHttpError && error.status === 401) {
+          onLogout();
+          throw error;
+        }
+
+        if (error instanceof Error && error.message) {
+          setMeetingRequestErrorMessage(error.message);
+        } else {
+          setMeetingRequestErrorMessage("Gorusme istegi olusturulamadi.");
+        }
+        throw error;
+      } finally {
+        setIsCreatingMeetingRequest(false);
       }
     },
     [onLogout, onRequireLogin, session],
@@ -186,7 +290,7 @@ export default function CustomerPanelPage({
       {isMobile && mobileOpen && (
         <div
           role="button"
-          aria-label="Menüyü kapat"
+          aria-label="Menuyu kapat"
           onClick={() => setMobileOpen(false)}
           onKeyDown={(event) => {
             if (event.key === "Enter" || event.key === " ") {
@@ -239,7 +343,17 @@ export default function CustomerPanelPage({
             isLoadingTickets={isLoadingTickets}
             isCreatingTicket={isCreatingTicket}
             ticketErrorMessage={ticketErrorMessage}
+            meetingNotes={meetingNotes}
+            isLoadingMeetingNotes={isLoadingMeetingNotes}
+            meetingNotesErrorMessage={meetingNotesErrorMessage}
+            isLoadingMeetingRequests={isLoadingTickets}
+            meetingRequestsErrorMessage={ticketErrorMessage}
+            isCreatingMeetingRequest={isCreatingMeetingRequest}
+            meetingRequestErrorMessage={meetingRequestErrorMessage}
+            selectedMeetingProjectId={selectedMeetingProjectId}
             projects={dashboardData?.projects ?? []}
+            onMeetingProjectChange={setSelectedMeetingProjectId}
+            onCreateMeetingRequest={handleCreateMeetingRequest}
             onCreateTicket={handleCreateTicket}
           />
         </main>

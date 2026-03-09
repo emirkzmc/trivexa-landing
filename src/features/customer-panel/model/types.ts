@@ -22,6 +22,7 @@ export interface CustomerPanelProject {
 }
 
 export interface CustomerPanelDashboardData {
+  clientId?: string;
   activeProjects: number;
   pendingInvoices: number;
   unreadTickets: number;
@@ -41,6 +42,19 @@ export interface CustomerPanelTicket {
   projectName?: string;
   approvedAt?: string;
   createdAt: string;
+}
+
+export interface CustomerMeetingNote {
+  id: string;
+  title: string;
+  date: string;
+  durationMinutes: number;
+  projectId?: string;
+  link?: string;
+  notes?: string;
+  summary?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CreateCustomerTicketInput {

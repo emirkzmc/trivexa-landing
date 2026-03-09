@@ -1,5 +1,6 @@
 import type {
   CreateCustomerTicketInput,
+  CustomerMeetingNote,
   CustomerPanelDashboardData,
   CustomerPanelProject,
   CustomerPanelSession,
@@ -38,6 +39,7 @@ interface RawLoginData {
 }
 
 interface RawDashboardData {
+  clientId?: unknown;
   activeProjects?: unknown;
   projects?: unknown;
   pendingInvoices?: unknown;
@@ -62,6 +64,23 @@ interface RawTicketData {
   approved_at?: unknown;
   createdAt?: unknown;
   created_at?: unknown;
+}
+
+interface RawMeetingData {
+  id?: unknown;
+  title?: unknown;
+  date?: unknown;
+  durationMinutes?: unknown;
+  duration_minutes?: unknown;
+  projectId?: unknown;
+  project_id?: unknown;
+  link?: unknown;
+  notes?: unknown;
+  summary?: unknown;
+  createdAt?: unknown;
+  created_at?: unknown;
+  updatedAt?: unknown;
+  updated_at?: unknown;
 }
 
 function resolveApiBaseUrl() {
@@ -152,7 +171,41 @@ function normalizeTicket(raw: unknown): CustomerPanelTicket {
   };
 }
 
+function normalizeMeetingNote(raw: unknown): CustomerMeetingNote {
+  const row = toRecord(raw);
+  return {
+    id: toStringValue(row.id),
+    title: toStringValue(row.title) || "Toplanti",
+    date: toStringValue(row.date),
+    durationMinutes: toNumberValue(row.durationMinutes || row.duration_minutes),
+    projectId: toStringValue(row.projectId || row.project_id) || undefined,
+    link: toStringValue(row.link) || undefined,
+    notes: toStringValue(row.notes) || undefined,
+    summary: toStringValue(row.summary) || undefined,
+    createdAt: toStringValue(row.createdAt || row.created_at) || undefined,
+    updatedAt: toStringValue(row.updatedAt || row.updated_at) || undefined,
+  };
+}
+
 function extractTicketRows(payload: unknown): unknown[] {
+  const first = unwrapData(payload as MaybeWrapped<unknown>);
+  if (Array.isArray(first)) return first;
+
+  const firstRecord = toRecord(first);
+  if (Array.isArray(firstRecord.items)) return firstRecord.items;
+  if (Array.isArray(firstRecord.data)) return firstRecord.data;
+
+  const nested = unwrapData(first as MaybeWrapped<unknown>);
+  if (Array.isArray(nested)) return nested;
+
+  const nestedRecord = toRecord(nested);
+  if (Array.isArray(nestedRecord.items)) return nestedRecord.items;
+  if (Array.isArray(nestedRecord.data)) return nestedRecord.data;
+
+  return [];
+}
+
+function extractMeetingRows(payload: unknown): unknown[] {
   const first = unwrapData(payload as MaybeWrapped<unknown>);
   if (Array.isArray(first)) return first;
 
@@ -259,6 +312,7 @@ export async function getCustomerDashboard(
   const projects = projectsRaw.map((item) => normalizeProject(item));
 
   return {
+    clientId: toStringValue(data.clientId) || undefined,
     activeProjects: toNumberValue(data.activeProjects || projects.length),
     pendingInvoices: toNumberValue(data.pendingInvoices),
     unreadTickets: toNumberValue(data.unreadTickets),
@@ -298,4 +352,34 @@ export async function createCustomerTicket(
 
   const data = unwrapData(payload as MaybeWrapped<unknown>);
   return normalizeTicket(data as RawTicketData);
+}
+
+export async function getCustomerMeetingNotes(
+  accessToken: string,
+  options?: {
+    clientId?: string;
+    projectId?: string;
+  },
+): Promise<CustomerMeetingNote[]> {
+  const params = new URLSearchParams();
+
+  if (options?.clientId) {
+    params.set("clientId", options.clientId);
+  }
+
+  if (options?.projectId) {
+    params.set("projectId", options.projectId);
+  }
+
+  const query = params.toString();
+  const path = query ? `/meetings?${query}` : "/meetings";
+
+  const payload = await requestJson<unknown>(path, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  const rows = extractMeetingRows(payload);
+  return rows.map((item) => normalizeMeetingNote(item as RawMeetingData));
 }
