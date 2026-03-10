@@ -1,9 +1,12 @@
 import { type FormEvent, useState } from "react";
 import Input from "../../../shared/ui/Input";
 import Label from "../../../shared/ui/Label";
+import { useLandingContent } from "../../../shared/hooks/useLandingContent";
 import { submitLandingContactForm } from "../api/contact.api";
 
 export default function ContactSection() {
+  const { content } = useLandingContent();
+  const contact = content.contact;
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -20,7 +23,7 @@ export default function ContactSection() {
     setFeedback(null);
 
     if (!form.fullName.trim() || !form.email.trim() || !form.subject.trim() || !form.message.trim()) {
-      setFeedback({ type: "error", text: "Lütfen zorunlu alanları doldurun." });
+      setFeedback({ type: "error", text: "Lutfen zorunlu alanlari doldurun." });
       return;
     }
 
@@ -36,7 +39,7 @@ export default function ContactSection() {
       });
       setFeedback({
         type: "success",
-        text: "Mesajınız alındı. Ekibimiz en kısa sürede sizinle iletişime geçecek.",
+        text: "Mesajiniz alindi. Ekibimiz en kisa surede sizinle iletisime gececek.",
       });
       setForm({
         fullName: "",
@@ -49,7 +52,7 @@ export default function ContactSection() {
     } catch (error) {
       setFeedback({
         type: "error",
-        text: error instanceof Error ? error.message : "Mesaj gönderilemedi. Lütfen tekrar deneyin.",
+        text: error instanceof Error ? error.message : "Mesaj gonderilemedi. Lutfen tekrar deneyin.",
       });
     } finally {
       setIsSubmitting(false);
@@ -60,18 +63,16 @@ export default function ContactSection() {
     <section id="contact-section" className="min-h-screen scroll-mt-24 bg-[#f8f9fb] px-6 py-24 md:px-20">
       <div className="mx-auto max-w-6xl">
         <div className="mb-12">
-          <Label>İLETİ�?İM</Label>
-          <h2 className="mt-4 text-4xl font-semibold leading-tight text-[#111827] md:text-5xl">Projenizi birlikte planlayalım.</h2>
-          <p className="mt-6 max-w-3xl text-lg leading-8 text-[#374151]">
-            Kısa bir formla ihtiyacınızı aktarın, ekibimiz en kısa sürede size dönüş yapsın.
-          </p>
+          <Label>{contact.label}</Label>
+          <h2 className="mt-4 text-4xl font-semibold leading-tight text-[#111827] md:text-5xl">{contact.title}</h2>
+          <p className="mt-6 max-w-3xl text-lg leading-8 text-[#374151]">{contact.description}</p>
         </div>
 
         <div className="grid items-start gap-10 md:grid-cols-2 md:gap-14">
           <div>
             <img
-              src="/contact.png"
-              alt="İletişim görseli"
+              src={contact.image}
+              alt="Iletisim gorseli"
               className="w-full rounded-lg border border-[#e5e7eb] object-cover shadow-sm backdrop-blur-2xl"
             />
           </div>
@@ -80,7 +81,7 @@ export default function ContactSection() {
             <form className="flex flex-col gap-5 rounded-2xl md:px-8" onSubmit={handleSubmit}>
               <div className="flex flex-col gap-2">
                 <Label variant="field" htmlFor="name">
-                  İsim
+                  Isim
                 </Label>
                 <Input
                   id="name"
@@ -100,7 +101,7 @@ export default function ContactSection() {
                   id="email"
                   type="email"
                   name="email"
-                  placeholder="örnek@firma.com"
+                  placeholder="ornek@firma.com"
                   value={form.email}
                   onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
                 />
@@ -128,7 +129,7 @@ export default function ContactSection() {
                   id="company"
                   type="text"
                   name="company"
-                  placeholder="Firma adı (opsiyonel)"
+                  placeholder="Firma adi (opsiyonel)"
                   value={form.company}
                   onChange={(event) => setForm((prev) => ({ ...prev, company: event.target.value }))}
                 />
@@ -142,7 +143,7 @@ export default function ContactSection() {
                   id="subject"
                   type="text"
                   name="subject"
-                  placeholder="Kısa konu başlığı"
+                  placeholder="Kisa konu basligi"
                   value={form.subject}
                   onChange={(event) => setForm((prev) => ({ ...prev, subject: event.target.value }))}
                 />
@@ -150,13 +151,13 @@ export default function ContactSection() {
 
               <div className="flex flex-col gap-2">
                 <Label variant="field" htmlFor="description">
-                  Açıklama
+                  Aciklama
                 </Label>
                 <textarea
                   id="description"
                   name="description"
                   rows={6}
-                  placeholder="Proje detaylarını kısaca paylaşın..."
+                  placeholder="Proje detaylarini kisaca paylasin..."
                   className="rounded-xl border border-[#d1d5db] bg-white px-4 py-3 text-[#111827] outline-none transition focus:border-[#111827]"
                   value={form.message}
                   onChange={(event) => setForm((prev) => ({ ...prev, message: event.target.value }))}
@@ -175,7 +176,7 @@ export default function ContactSection() {
                   disabled={isSubmitting}
                   className="rounded-full bg-[#111827] px-8 py-3 text-sm font-medium text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {isSubmitting ? "Gönderiliyor..." : "Gönder"}
+                  {isSubmitting ? "Gonderiliyor..." : "Gonder"}
                 </button>
               </div>
             </form>
