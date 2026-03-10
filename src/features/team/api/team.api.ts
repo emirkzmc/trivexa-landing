@@ -1,3 +1,11 @@
+import {
+  ApiHttpError,
+  requestJson,
+  resolveApiBaseUrl,
+  unwrapData,
+  type MaybeWrapped,
+} from "../../../shared/api/httpClient";
+
 export interface TeamMember {
   id: string;
   firstName: string;
@@ -18,14 +26,6 @@ interface TeamPayload {
 }
 
 const DEFAULT_API_BASE_URL = "http://localhost:3500/api/v1";
-
-function resolveApiBaseUrl(): string {
-  const rawBase = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim();
-  if (rawBase) {
-    return rawBase.replace(/\/+$/, "");
-  }
-  return DEFAULT_API_BASE_URL;
-}
 
 function resolveCandidateUrls(): string[] {
   const base = resolveApiBaseUrl();
@@ -48,28 +48,19 @@ function resolveCandidateUrls(): string[] {
 
 export async function fetchTeamByDepartment(): Promise<TeamDepartment[]> {
   const candidateUrls = resolveCandidateUrls();
-  let lastErrorMessage = "Takım bilgileri alınamadı.";
+  let lastErrorMessage = "Takim bilgileri alinamadi.";
 
   for (const url of candidateUrls) {
     try {
-      const response = await fetch(url);
-      const json = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        const message = typeof (json as { message?: unknown })?.message === "string"
-          ? (json as { message: string }).message
-          : `Takım endpointine ulaşılamadı (${response.status}).`;
-        lastErrorMessage = message;
-        continue;
-      }
-
-      const data = (json && typeof json === "object" && "data" in json)
-        ? (json as { data?: TeamPayload }).data
-        : (json as TeamPayload);
-
+      const payload = await requestJson<MaybeWrapped<TeamPayload>>(url);
+      const data = unwrapData(payload);
       return Array.isArray(data?.departments) ? data.departments : [];
-    } catch {
-      lastErrorMessage = "Takım endpointine bağlanırken ağ hatası oluştu.";
+    } catch (error) {
+      if (error instanceof ApiHttpError) {
+        lastErrorMessage = error.message;
+      } else {
+        lastErrorMessage = "Takim endpointine baglanirken ag hatasi olustu.";
+      }
     }
   }
 

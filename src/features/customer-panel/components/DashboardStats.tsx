@@ -1,4 +1,6 @@
 import type { CustomerPanelDashboardData } from "../model/types";
+import InfoMessage from "../../../shared/ui/InfoMessage";
+import StatCard from "../../../shared/ui/StatCard";
 
 interface DashboardStatsProps {
   dashboardData: CustomerPanelDashboardData | null;
@@ -6,16 +8,12 @@ interface DashboardStatsProps {
 
 export default function DashboardStats({ dashboardData }: DashboardStatsProps) {
   if (!dashboardData) {
-    return (
-      <section className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
-        Dashboard verisi backend'den henüz alınmadı.
-      </section>
-    );
+    return <InfoMessage message="Dashboard verisi backend'den henÃ¼z alÄ±nmadÄ±." />;
   }
 
   const stats = [
     { label: "Aktif Proje", value: String(dashboardData.activeProjects) },
-    { label: "Açık Talep", value: String(dashboardData.unreadTickets) },
+    { label: "AÃ§Ä±k Talep", value: String(dashboardData.unreadTickets) },
     { label: "Onay Bekleyen", value: String(dashboardData.pendingInvoices) },
     { label: "Toplam Proje", value: String(dashboardData.projects.length) },
   ];
@@ -29,18 +27,13 @@ export default function DashboardStats({ dashboardData }: DashboardStatsProps) {
       }}
     >
       {stats.map((item) => (
-        <article
+        <StatCard
           key={item.label}
-          style={{
-            border: "1px solid #E5E7EB",
-            backgroundColor: "#FFFFFF",
-            borderRadius: 16,
-            padding: 20,
-          }}
-        >
-          <p style={{ margin: 0, fontSize: 13, color: "#6B7280" }}>{item.label}</p>
-          <p style={{ margin: "8px 0 0", fontSize: 30, fontWeight: 600, color: "#111827" }}>{item.value}</p>
-        </article>
+          label={item.label}
+          value={item.value}
+          valueClassName="text-3xl font-semibold text-[#111827]"
+          className="rounded-2xl bg-white p-5"
+        />
       ))}
     </section>
   );

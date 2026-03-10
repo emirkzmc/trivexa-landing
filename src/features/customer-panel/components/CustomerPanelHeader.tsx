@@ -1,4 +1,5 @@
 import { LogoutIcon, MenuIcon } from "./icons";
+import CustomerPanelAvatar from "./CustomerPanelAvatar";
 
 interface CustomerPanelHeaderProps {
   pageName: string;
@@ -19,8 +20,6 @@ export default function CustomerPanelHeader({
   userEmail,
   roleLabel,
 }: CustomerPanelHeaderProps) {
-  const initials = (userName.trim().charAt(0) || "M").toUpperCase();
-
   return (
     <header
       style={{
@@ -71,22 +70,7 @@ export default function CustomerPanelHeader({
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <div
-          style={{
-            width: 34,
-            height: 34,
-            borderRadius: "50%",
-            backgroundColor: "#11182720",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 13,
-            fontWeight: 700,
-            color: "#111827",
-          }}
-        >
-          {initials}
-        </div>
+        <CustomerPanelAvatar name={userName} />
 
         {!isMobile && (
           <>

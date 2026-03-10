@@ -1,4 +1,9 @@
 import type { CustomerPanelTicket } from "../model/types";
+import InfoMessage from "../../../shared/ui/InfoMessage";
+import PillBadge from "../../../shared/ui/PillBadge";
+import SectionHeader from "../../../shared/ui/SectionHeader";
+import StatCard from "../../../shared/ui/StatCard";
+import Surface from "../../../shared/ui/Surface";
 
 interface PendingApprovalsSectionProps {
   pendingInvoices: number;
@@ -37,10 +42,10 @@ function stageLabel(stage?: string): string {
   return STAGE_LABELS[stage] || prettify(stage);
 }
 
-function stageTone(stage?: string): string {
-  if (!stage) return "bg-amber-50 text-amber-700 border border-amber-200";
-  if (stage === "TESLIM") return "bg-emerald-50 text-emerald-700 border border-emerald-200";
-  return "bg-indigo-50 text-indigo-700 border border-indigo-200";
+function stageTone(stage?: string): "warning" | "success" | "info" {
+  if (!stage) return "warning";
+  if (stage === "TESLIM") return "success";
+  return "info";
 }
 
 export default function PendingApprovalsSection({
@@ -55,54 +60,35 @@ export default function PendingApprovalsSection({
 
   return (
     <div className="space-y-4">
-      <section className="rounded-xl border border-slate-200 bg-white p-5">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h3 className="text-lg font-semibold text-[#111827]">Onay Bekleyen Isler</h3>
-            <p className="mt-1 text-sm text-slate-600">
-              Admin panelinde onaylanan talepler burada listelenir ve mevcut asama goruntulenir.
-            </p>
-          </div>
-        </div>
+      <Surface className="p-5">
+        <SectionHeader
+          title="Onay Bekleyen Isler"
+          description="Admin panelinde onaylanan talepler burada listelenir ve mevcut asama goruntulenir."
+        />
 
         <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
-          <article className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs uppercase tracking-wide text-slate-500">Onay Bekleyen</p>
-            <p className="mt-2 text-2xl font-semibold text-[#111827]">{pendingInvoices}</p>
-          </article>
-          <article className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs uppercase tracking-wide text-slate-500">Asama Secili</p>
-            <p className="mt-2 text-2xl font-semibold text-[#111827]">{withStageCount}</p>
-          </article>
-          <article className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs uppercase tracking-wide text-slate-500">Asama Bekleyen</p>
-            <p className="mt-2 text-2xl font-semibold text-[#111827]">{waitingStageCount}</p>
-          </article>
+          <StatCard label="Onay Bekleyen" value={pendingInvoices} />
+          <StatCard label="Asama Secili" value={withStageCount} />
+          <StatCard label="Asama Bekleyen" value={waitingStageCount} />
         </div>
-      </section>
+      </Surface>
 
       {isLoading ? (
-        <section className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
-          Onay kalemleri yukleniyor...
-        </section>
+        <InfoMessage message="Onay kalemleri yukleniyor..." />
       ) : errorMessage ? (
-        <section className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
-          {errorMessage}
-        </section>
+        <InfoMessage message={errorMessage} tone="error" />
       ) : approvedRequests.length === 0 ? (
-        <section className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
-          Henuz admin onayindan gecmis talep bulunmuyor.
-        </section>
+        <InfoMessage message="Henuz admin onayindan gecmis talep bulunmuyor." />
       ) : (
-        <section className="rounded-xl border border-slate-200 bg-white p-5">
+        <Surface className="p-5">
           <div className="space-y-3">
             {approvedRequests.map((item) => (
-              <article key={item.id} className="rounded-lg border border-slate-200 p-4">
+              <Surface key={item.id} as="article" className="rounded-lg p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="text-sm font-semibold text-[#111827]">{item.subject || "Talep"}</p>
-                  <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${stageTone(item.stage)}`}>
+                  <PillBadge tone={stageTone(item.stage)}>
                     {stageLabel(item.stage)}
-                  </span>
+                  </PillBadge>
                 </div>
 
                 <p className="mt-2 text-sm text-slate-600">{item.description || "-"}</p>
@@ -113,10 +99,10 @@ export default function PendingApprovalsSection({
                   <span className="rounded-md bg-slate-100 px-2 py-1">Tip: {prettify(item.type)}</span>
                   <span className="rounded-md bg-slate-100 px-2 py-1">Tarih: {formatDate(item.createdAt)}</span>
                 </div>
-              </article>
+              </Surface>
             ))}
           </div>
-        </section>
+        </Surface>
       )}
     </div>
   );

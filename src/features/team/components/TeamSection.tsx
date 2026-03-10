@@ -1,7 +1,10 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import defaultAvatar from "../../../assets/default-avatar.svg";
 import Label from "../../../shared/ui/Label";
-import { fetchTeamByDepartment, type TeamDepartment } from "../api/team.api";
+import SectionBlock from "../../../shared/ui/SectionBlock";
+import InfoMessage from "../../../shared/ui/InfoMessage";
+import StatCard from "../../../shared/ui/StatCard";
+import { fetchTeamByDepartment, type TeamDepartment, type TeamMember } from "../api/team.api";
 
 function formatLabel(value: string): string {
   return value
@@ -9,6 +12,89 @@ function formatLabel(value: string): string {
     .split("_")
     .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
     .join(" ");
+}
+
+interface DepartmentFilterButtonProps {
+  label: string;
+  isActive: boolean;
+  onClick: () => void;
+}
+
+function DepartmentFilterButton({ label, isActive, onClick }: DepartmentFilterButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
+        isActive
+          ? "border-[#111827] bg-white text-[#111827]"
+          : "border-[#d1d5db] bg-white text-[#374151] hover:border-[#9ca3af]"
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
+function TeamMemberCard({ member }: { member: TeamMember }) {
+  return (
+    <div className="group rounded-xl border border-[#e5e7eb] bg-[#fcfcfd] p-4 transition hover:-translate-y-0.5 hover:border-[#cbd5e1]">
+      <img
+        src={member.avatarUrl || defaultAvatar}
+        alt={member.fullName}
+        className="h-14 w-14 rounded-full border border-[#e5e7eb] object-cover"
+        onError={(event) => {
+          event.currentTarget.onerror = null;
+          event.currentTarget.src = defaultAvatar;
+        }}
+      />
+      <p className="mt-3 text-sm font-semibold text-[#111827]">{member.fullName}</p>
+      <p className="mt-1 text-xs text-[#6b7280]">{formatLabel(member.role)}</p>
+      <p className="mt-2 text-[11px] font-medium text-[#6b7280]">
+        {member.isActive ? "Aktif" : "Pasif"}
+      </p>
+    </div>
+  );
+}
+
+function TeamSkeletonGrid() {
+  return (
+    <div className="grid gap-5 md:grid-cols-2">
+      {Array.from({ length: 2 }).map((_, index) => (
+        <div key={index} className="rounded-2xl border border-[#e5e7eb] bg-white p-6">
+          <div className="h-5 w-40 animate-pulse rounded bg-[#e5e7eb]" />
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {Array.from({ length: 4 }).map((__, innerIndex) => (
+              <div key={innerIndex} className="rounded-xl border border-[#f3f4f6] p-4">
+                <div className="h-12 w-12 animate-pulse rounded-full bg-[#e5e7eb]" />
+                <div className="mt-3 h-4 w-24 animate-pulse rounded bg-[#e5e7eb]" />
+                <div className="mt-2 h-3 w-16 animate-pulse rounded bg-[#f3f4f6]" />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DepartmentSection({ department }: { department: TeamDepartment }) {
+  return (
+    <article className="rounded-2xl border border-[#e5e7eb] bg-white p-6">
+      <div className="flex items-center justify-between gap-4 border-b border-[#f3f4f6] pb-4">
+        <h3 className="text-xl font-semibold text-[#111827]">{formatLabel(department.department)}</h3>
+        <span className="rounded-full bg-[#f3f4f6] px-3 py-1 text-xs font-semibold text-[#4b5563]">
+          {department.members.length} üye
+        </span>
+      </div>
+
+      <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {department.members.map((member) => (
+          <TeamMemberCard key={member.id} member={member} />
+        ))}
+      </div>
+    </article>
+  );
 }
 
 export default function TeamSection() {
@@ -67,128 +153,52 @@ export default function TeamSection() {
   const hasTeamData = !isLoading && departments.length > 0;
 
   return (
-    <section
-      id="team-section"
-      className="min-h-screen scroll-mt-24 bg-white px-6 py-24 md:px-20"
-    >
-      <div className="mx-auto max-w-6xl">
-        <Label>TAKIM</Label>
-        <div className="mt-4 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <h2 className="max-w-3xl text-4xl font-semibold leading-tight text-[#111827] md:text-5xl">
-            Uzman kadro, net sonuç.
-          </h2>
+    <SectionBlock id="team-section" className="min-h-screen scroll-mt-24 bg-white" containerClassName="max-w-6xl">
+      <Label>TAKIM</Label>
+      <div className="mt-4 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <h2 className="max-w-3xl text-4xl font-semibold leading-tight text-[#111827] md:text-5xl">
+          Uzman kadro, net sonuç.
+        </h2>
+      </div>
 
-        </div>
+      <div className="mt-10 grid gap-4 sm:grid-cols-2">
+        <StatCard label="Toplam Üye" value={isLoading ? "..." : totalMembers} className="rounded-2xl bg-white/80 p-5" />
+        <StatCard label="Departman" value={isLoading ? "..." : departments.length} className="rounded-2xl bg-white/80 p-5" />
+      </div>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-2">
-          <article className="rounded-2xl border border-[#e5e7eb] bg-white/80 p-5 backdrop-blur">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#6b7280]">Toplam Üye</p>
-            <p className="mt-2 text-3xl font-semibold text-[#111827]">{isLoading ? "..." : totalMembers}</p>
-          </article>
-          <article className="rounded-2xl border border-[#e5e7eb] bg-white/80 p-5 backdrop-blur">
-            <p className="text-xs font-semibold uppercase tracking-wide text-[#6b7280]">Departman</p>
-            <p className="mt-2 text-3xl font-semibold text-[#111827]">{isLoading ? "..." : departments.length}</p>
-          </article>
-        </div>
-
-        {hasTeamData && (
-          <div className="mt-8 flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => setSelectedDepartment("ALL")}
-              className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
-                selectedDepartment === "ALL"
-                  ? "border-[#111827] bg-white text-[#111827]"
-                  : "border-[#d1d5db] bg-white text-[#374151] hover:border-[#9ca3af]"
-              }`}
-            >
-              Tüm Departmanlar
-            </button>
-            {departments.map((department) => (
-              <button
-                key={department.department}
-                type="button"
-                onClick={() => setSelectedDepartment(department.department)}
-                className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
-                  selectedDepartment === department.department
-                    ? "border-[#111827] bg-white text-[#111827]"
-                    : "border-[#d1d5db] bg-white text-[#374151] hover:border-[#9ca3af]"
-                }`}
-              >
-                {formatLabel(department.department)} ({department.members.length})
-              </button>
-            ))}
-          </div>
-        )}
-
-        <div className="mt-10 space-y-8">
-          {isLoading && (
-            <div className="grid gap-5 md:grid-cols-2">
-              {Array.from({ length: 2 }).map((_, index) => (
-                <div key={index} className="rounded-2xl border border-[#e5e7eb] bg-white p-6">
-                  <div className="h-5 w-40 animate-pulse rounded bg-[#e5e7eb]" />
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    {Array.from({ length: 4 }).map((__, innerIndex) => (
-                      <div key={innerIndex} className="rounded-xl border border-[#f3f4f6] p-4">
-                        <div className="h-12 w-12 animate-pulse rounded-full bg-[#e5e7eb]" />
-                        <div className="mt-3 h-4 w-24 animate-pulse rounded bg-[#e5e7eb]" />
-                        <div className="mt-2 h-3 w-16 animate-pulse rounded bg-[#f3f4f6]" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {!isLoading && error && (
-            <div className="rounded-2xl border border-[#fecaca] bg-[#fef2f2] p-6 text-sm text-[#b91c1c]">
-              {error}
-            </div>
-          )}
-
-          {!isLoading && departments.length > 0 && visibleDepartments.length === 0 && (
-            <div className="rounded-2xl border border-[#e5e7eb] bg-white p-6 text-sm text-[#4b5563]">
-              Seçilen filtrede gösterilecek personel bulunamadı.
-            </div>
-          )}
-
-          {hasTeamData && visibleDepartments.map((department) => (
-            <article key={department.department} className="rounded-2xl border border-[#e5e7eb] bg-white p-6">
-              <div className="flex items-center justify-between gap-4 border-b border-[#f3f4f6] pb-4">
-                <h3 className="text-xl font-semibold text-[#111827]">{formatLabel(department.department)}</h3>
-                <span className="rounded-full bg-[#f3f4f6] px-3 py-1 text-xs font-semibold text-[#4b5563]">
-                  {department.members.length} üye
-                </span>
-              </div>
-
-              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {department.members.map((member) => (
-                  <div
-                    key={member.id}
-                    className="group rounded-xl border border-[#e5e7eb] bg-[#fcfcfd] p-4 transition hover:-translate-y-0.5 hover:border-[#cbd5e1]"
-                  >
-                    <img
-                      src={member.avatarUrl || defaultAvatar}
-                      alt={member.fullName}
-                      className="h-14 w-14 rounded-full border border-[#e5e7eb] object-cover"
-                      onError={(event) => {
-                        event.currentTarget.onerror = null;
-                        event.currentTarget.src = defaultAvatar;
-                      }}
-                    />
-                    <p className="mt-3 text-sm font-semibold text-[#111827]">{member.fullName}</p>
-                    <p className="mt-1 text-xs text-[#6b7280]">{formatLabel(member.role)}</p>
-                    <p className="mt-2 text-[11px] font-medium text-[#6b7280]">
-                      {member.isActive ? "Aktif" : "Pasif"}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </article>
+      {hasTeamData && (
+        <div className="mt-8 flex flex-wrap gap-2">
+          <DepartmentFilterButton
+            label="Tüm Departmanlar"
+            isActive={selectedDepartment === "ALL"}
+            onClick={() => setSelectedDepartment("ALL")}
+          />
+          {departments.map((department) => (
+            <DepartmentFilterButton
+              key={department.department}
+              label={`${formatLabel(department.department)} (${department.members.length})`}
+              isActive={selectedDepartment === department.department}
+              onClick={() => setSelectedDepartment(department.department)}
+            />
           ))}
         </div>
+      )}
+
+      <div className="mt-10 space-y-8">
+        {isLoading && <TeamSkeletonGrid />}
+
+        {!isLoading && error && (
+          <InfoMessage message={error} tone="error" className="rounded-2xl" />
+        )}
+
+        {!isLoading && departments.length > 0 && visibleDepartments.length === 0 && (
+          <InfoMessage message="Seçilen filtrede gösterilecek personel bulunamadı." className="rounded-2xl" />
+        )}
+
+        {hasTeamData && visibleDepartments.map((department) => (
+          <DepartmentSection key={department.department} department={department} />
+        ))}
       </div>
-    </section>
+    </SectionBlock>
   );
 }

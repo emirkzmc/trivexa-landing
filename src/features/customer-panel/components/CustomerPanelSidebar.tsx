@@ -2,6 +2,7 @@ import { NAV_ITEMS, SIDEBAR_COLLAPSED_WIDTH, SIDEBAR_EXPANDED_WIDTH, MOBILE_SIDE
 import { CUSTOMER_PANEL_CONTRACT_DETAIL_PREFIX, CUSTOMER_PANEL_PROJECT_DETAIL_PREFIX } from "../model/types";
 import type { CustomerPanelPath } from "../model/types";
 import { ChevronRightIcon, CloseIcon, LogoutIcon, SquareGridIcon, getItemIcon } from "./icons";
+import CustomerPanelAvatar from "./CustomerPanelAvatar";
 
 interface CustomerPanelSidebarProps {
   currentPath: CustomerPanelPath;
@@ -233,23 +234,7 @@ export default function CustomerPanelSidebar({
             justifyContent: collapsedState ? "center" : "flex-start",
           }}
         >
-          <div
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: "50%",
-              backgroundColor: "#11182730",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-              fontSize: 13,
-              fontWeight: 700,
-              color: "#111827",
-            }}
-            >
-              {(userName.trim().charAt(0) || "M").toUpperCase()}
-            </div>
+          <CustomerPanelAvatar name={userName} backgroundColor="#11182730" />
 
           {!collapsedState && (
             <span

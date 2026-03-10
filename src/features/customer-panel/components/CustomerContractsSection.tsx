@@ -1,4 +1,7 @@
 import type { CustomerPanelContract } from "../model/types";
+import InfoMessage from "../../../shared/ui/InfoMessage";
+import SectionHeader from "../../../shared/ui/SectionHeader";
+import Surface from "../../../shared/ui/Surface";
 
 interface CustomerContractsSectionProps {
   contracts: CustomerPanelContract[];
@@ -39,27 +42,19 @@ export default function CustomerContractsSection({
   onSelectContract,
 }: CustomerContractsSectionProps) {
   if (isLoading) {
-    return (
-      <section className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
-        Sozlesmeler yukleniyor...
-      </section>
-    );
+    return <InfoMessage message="Sozlesmeler yukleniyor..." />;
   }
 
   if (errorMessage) {
-    return (
-      <section className="rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
-        {errorMessage}
-      </section>
-    );
+    return <InfoMessage message={errorMessage} tone="error" />;
   }
 
   return (
-    <section className="rounded-xl border border-slate-200 bg-white p-6">
-      <h3 className="text-lg font-semibold text-slate-900">Sozlesmelerim</h3>
-      <p className="mt-2 text-sm text-slate-600">
-        Imzali sozlesme dosyalarinizi buradan goruntuleyebilirsiniz.
-      </p>
+    <Surface className="p-6">
+      <SectionHeader
+        title="Sozlesmelerim"
+        description="Imzali sozlesme dosyalarinizi buradan goruntuleyebilirsiniz."
+      />
 
       <div className="mt-4 overflow-x-auto">
         <table className="w-full min-w-[720px] text-left text-sm">
@@ -116,6 +111,6 @@ export default function CustomerContractsSection({
           </tbody>
         </table>
       </div>
-    </section>
+    </Surface>
   );
 }

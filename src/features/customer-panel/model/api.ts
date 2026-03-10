@@ -10,20 +10,8 @@ import type {
   CustomerPanelSession,
   CustomerPanelTicket,
 } from "./types";
-
-const DEFAULT_API_BASE_URL = "http://localhost:3500/api/v1";
-
-type MaybeWrapped<T> = { data?: T } | T;
-
-export class ApiHttpError extends Error {
-  status: number;
-
-  constructor(status: number, message: string) {
-    super(message);
-    this.name = "ApiHttpError";
-    this.status = status;
-  }
-}
+import { requestJson, unwrapData, type MaybeWrapped } from "../../../shared/api/httpClient";
+export { ApiHttpError } from "../../../shared/api/httpClient";
 
 interface RawLoginUser {
   id?: unknown;
@@ -120,11 +108,6 @@ interface RawContractData {
   updated_at?: unknown;
 }
 
-function resolveApiBaseUrl() {
-  const raw = import.meta.env.VITE_API_BASE_URL as string | undefined;
-  return (raw || DEFAULT_API_BASE_URL).replace(/\/+$/, "");
-}
-
 function toRecord(value: unknown): Record<string, unknown> {
   if (typeof value === "object" && value !== null) {
     return value as Record<string, unknown>;
@@ -155,18 +138,6 @@ function toBooleanValue(value: unknown): boolean {
   }
   if (typeof value === "number") return value === 1;
   return false;
-}
-
-function unwrapData<T>(payload: MaybeWrapped<T>): T {
-  if (
-    typeof payload === "object"
-    && payload !== null
-    && "data" in payload
-    && (payload as { data?: unknown }).data !== undefined
-  ) {
-    return (payload as { data: T }).data;
-  }
-  return payload as T;
 }
 
 function statusToProgress(status: string): string {
@@ -374,34 +345,6 @@ function extractContractRows(payload: unknown): unknown[] {
   return [];
 }
 
-function extractErrorMessage(payload: unknown): string {
-  const data = toRecord(payload);
-  const direct = data.message;
-
-  if (typeof direct === "string" && direct.trim()) {
-    return direct;
-  }
-
-  const nested = toRecord(data.data);
-  if (typeof nested.message === "string" && nested.message.trim()) {
-    return nested.message;
-  }
-
-  return "İstek sırasında bir hata oluştu.";
-}
-
-async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${resolveApiBaseUrl()}${path}`, init);
-  const text = await response.text();
-  const payload = text ? (JSON.parse(text) as unknown) : {};
-
-  if (!response.ok) {
-    throw new ApiHttpError(response.status, extractErrorMessage(payload));
-  }
-
-  return payload as T;
-}
-
 export async function loginCustomerPanel(
   email: string,
   password: string,
@@ -595,3 +538,5 @@ export async function getCustomerContractDetail(
   }
   return normalized;
 }
+
+

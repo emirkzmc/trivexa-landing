@@ -1,6 +1,8 @@
 import { type FormEvent, useState } from "react";
 import Input from "../../../shared/ui/Input";
 import Label from "../../../shared/ui/Label";
+import FormField from "../../../shared/ui/FormField";
+import SectionBlock from "../../../shared/ui/SectionBlock";
 import { useLandingContent } from "../../../shared/hooks/useLandingContent";
 import { submitLandingContactForm } from "../api/contact.api";
 
@@ -60,29 +62,25 @@ export default function ContactSection() {
   }
 
   return (
-    <section id="contact-section" className="min-h-screen scroll-mt-24 bg-[#f8f9fb] px-6 py-24 md:px-20">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-12">
-          <Label>{contact.label}</Label>
-          <h2 className="mt-4 text-4xl font-semibold leading-tight text-[#111827] md:text-5xl">{contact.title}</h2>
-          <p className="mt-6 max-w-3xl text-lg leading-8 text-[#374151]">{contact.description}</p>
+    <SectionBlock className="min-h-screen scroll-mt-24 bg-[#f8f9fb]" containerClassName="max-w-6xl">
+      <div className="mb-12">
+        <Label>{contact.label}</Label>
+        <h2 className="mt-4 text-4xl font-semibold leading-tight text-[#111827] md:text-5xl">{contact.title}</h2>
+        <p className="mt-6 max-w-3xl text-lg leading-8 text-[#374151]">{contact.description}</p>
+      </div>
+
+      <div className="grid items-start gap-10 md:grid-cols-2 md:gap-14">
+        <div>
+          <img
+            src={contact.image}
+            alt="Iletisim gorseli"
+            className="w-full rounded-lg border border-[#e5e7eb] object-cover shadow-sm backdrop-blur-2xl"
+          />
         </div>
 
-        <div className="grid items-start gap-10 md:grid-cols-2 md:gap-14">
-          <div>
-            <img
-              src={contact.image}
-              alt="Iletisim gorseli"
-              className="w-full rounded-lg border border-[#e5e7eb] object-cover shadow-sm backdrop-blur-2xl"
-            />
-          </div>
-
-          <div>
-            <form className="flex flex-col gap-5 rounded-2xl md:px-8" onSubmit={handleSubmit}>
-              <div className="flex flex-col gap-2">
-                <Label variant="field" htmlFor="name">
-                  Isim
-                </Label>
+        <div>
+          <form className="flex flex-col gap-5 rounded-2xl md:px-8" onSubmit={handleSubmit}>
+              <FormField label="Isim" htmlFor="name">
                 <Input
                   id="name"
                   type="text"
@@ -91,12 +89,9 @@ export default function ContactSection() {
                   value={form.fullName}
                   onChange={(event) => setForm((prev) => ({ ...prev, fullName: event.target.value }))}
                 />
-              </div>
+              </FormField>
 
-              <div className="flex flex-col gap-2">
-                <Label variant="field" htmlFor="email">
-                  Mail
-                </Label>
+              <FormField label="Mail" htmlFor="email">
                 <Input
                   id="email"
                   type="email"
@@ -105,12 +100,9 @@ export default function ContactSection() {
                   value={form.email}
                   onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
                 />
-              </div>
+              </FormField>
 
-              <div className="flex flex-col gap-2">
-                <Label variant="field" htmlFor="phone">
-                  Telefon
-                </Label>
+              <FormField label="Telefon" htmlFor="phone">
                 <Input
                   id="phone"
                   type="tel"
@@ -119,12 +111,9 @@ export default function ContactSection() {
                   value={form.phone}
                   onChange={(event) => setForm((prev) => ({ ...prev, phone: event.target.value }))}
                 />
-              </div>
+              </FormField>
 
-              <div className="flex flex-col gap-2">
-                <Label variant="field" htmlFor="company">
-                  Firma
-                </Label>
+              <FormField label="Firma" htmlFor="company">
                 <Input
                   id="company"
                   type="text"
@@ -133,12 +122,9 @@ export default function ContactSection() {
                   value={form.company}
                   onChange={(event) => setForm((prev) => ({ ...prev, company: event.target.value }))}
                 />
-              </div>
+              </FormField>
 
-              <div className="flex flex-col gap-2">
-                <Label variant="field" htmlFor="subject">
-                  Konu
-                </Label>
+              <FormField label="Konu" htmlFor="subject">
                 <Input
                   id="subject"
                   type="text"
@@ -147,12 +133,9 @@ export default function ContactSection() {
                   value={form.subject}
                   onChange={(event) => setForm((prev) => ({ ...prev, subject: event.target.value }))}
                 />
-              </div>
+              </FormField>
 
-              <div className="flex flex-col gap-2">
-                <Label variant="field" htmlFor="description">
-                  Aciklama
-                </Label>
+              <FormField label="Aciklama" htmlFor="description">
                 <textarea
                   id="description"
                   name="description"
@@ -162,7 +145,7 @@ export default function ContactSection() {
                   value={form.message}
                   onChange={(event) => setForm((prev) => ({ ...prev, message: event.target.value }))}
                 />
-              </div>
+              </FormField>
 
               {feedback && (
                 <p className={`text-sm font-medium ${feedback.type === "success" ? "text-emerald-700" : "text-red-600"}`}>
@@ -179,10 +162,9 @@ export default function ContactSection() {
                   {isSubmitting ? "Gonderiliyor..." : "Gonder"}
                 </button>
               </div>
-            </form>
-          </div>
+          </form>
         </div>
       </div>
-    </section>
+    </SectionBlock>
   );
 }
