@@ -1,17 +1,24 @@
 export const CUSTOMER_PANEL_PATHS = [
   "/customer-panel/dashboard",
   "/customer-panel/projeler",
+  "/customer-panel/sozlesmeler",
   "/customer-panel/talepler",
   "/customer-panel/notlar",
   "/customer-panel/onaylar",
 ] as const;
 
-export type CustomerPanelPath = (typeof CUSTOMER_PANEL_PATHS)[number];
+export const CUSTOMER_PANEL_PROJECT_DETAIL_PREFIX = "/customer-panel/projeler/";
+export const CUSTOMER_PANEL_CONTRACT_DETAIL_PREFIX = "/customer-panel/sozlesmeler/";
+
+export type CustomerPanelNavPath = (typeof CUSTOMER_PANEL_PATHS)[number];
+export type CustomerPanelProjectDetailPath = `${typeof CUSTOMER_PANEL_PROJECT_DETAIL_PREFIX}${string}`;
+export type CustomerPanelContractDetailPath = `${typeof CUSTOMER_PANEL_CONTRACT_DETAIL_PREFIX}${string}`;
+export type CustomerPanelPath = CustomerPanelNavPath | CustomerPanelProjectDetailPath | CustomerPanelContractDetailPath;
 
 export interface CustomerPanelNavItem {
   label: string;
-  path: CustomerPanelPath;
-  icon: "dashboard" | "projects" | "requests" | "notes" | "approvals";
+  path: CustomerPanelNavPath;
+  icon: "dashboard" | "projects" | "contracts" | "requests" | "notes" | "approvals";
 }
 
 export interface CustomerPanelProject {
@@ -19,6 +26,64 @@ export interface CustomerPanelProject {
   name: string;
   status: string;
   progress: string;
+}
+
+export interface CustomerPanelProjectDetailItem {
+  id: string;
+  name: string;
+  description?: string;
+  status: string;
+  budget?: number;
+  startDate?: string;
+  deadline?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CustomerPanelProjectTask {
+  id: string;
+  title: string;
+  status: string;
+  priority?: string;
+  updatedAt?: string;
+  dueDate?: string;
+  assigneeName?: string;
+  assigneeEmail?: string;
+}
+
+export interface CustomerPanelProjectDetail {
+  project: CustomerPanelProjectDetailItem;
+  taskMetrics?: {
+    total: number;
+    completed: number;
+    percentage: number;
+  };
+  taskSummary?: {
+    total: number;
+    byStatus: {
+      TODO: number;
+      IN_PROGRESS: number;
+      IN_REVIEW: number;
+      BLOCKED: number;
+      DONE: number;
+    };
+    doneThisWeek: number;
+  };
+  recentTasks?: CustomerPanelProjectTask[];
+}
+
+export interface CustomerPanelContract {
+  id: string;
+  projectId?: string;
+  title: string;
+  description?: string;
+  status: string;
+  startDate?: string;
+  endDate?: string;
+  value?: number;
+  signedUrl?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CustomerPanelDashboardData {

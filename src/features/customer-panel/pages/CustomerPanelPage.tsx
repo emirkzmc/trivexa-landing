@@ -8,13 +8,20 @@ import {
   createCustomerTicket,
   getCustomerDashboard,
   getCustomerMeetingNotes,
+  getCustomerProjectDetail,
+  getCustomerContracts,
+  getCustomerContractDetail,
   getCustomerTickets,
 } from "../model/api";
 import {
   type CreateCustomerTicketInput,
   CUSTOMER_PANEL_PATHS,
+  CUSTOMER_PANEL_PROJECT_DETAIL_PREFIX,
+  CUSTOMER_PANEL_CONTRACT_DETAIL_PREFIX,
   type CustomerMeetingNote,
+  type CustomerPanelContract,
   type CustomerPanelDashboardData,
+  type CustomerPanelProjectDetail,
   type CustomerPanelPath,
   type CustomerPanelSession,
   type CustomerPanelTicket,
@@ -32,7 +39,9 @@ interface CustomerPanelPageProps {
 }
 
 export function isCustomerPanelPath(pathname: string): pathname is CustomerPanelPath {
-  return CUSTOMER_PANEL_PATHS.includes(pathname as CustomerPanelPath);
+  return CUSTOMER_PANEL_PATHS.includes(pathname as CustomerPanelPath)
+    || pathname.startsWith(CUSTOMER_PANEL_PROJECT_DETAIL_PREFIX)
+    || pathname.startsWith(CUSTOMER_PANEL_CONTRACT_DETAIL_PREFIX);
 }
 
 export default function CustomerPanelPage({
@@ -55,6 +64,17 @@ export default function CustomerPanelPage({
   const [ticketErrorMessage, setTicketErrorMessage] = useState<string | null>(null);
   const [isCreatingMeetingRequest, setIsCreatingMeetingRequest] = useState(false);
   const [meetingRequestErrorMessage, setMeetingRequestErrorMessage] = useState<string | null>(null);
+
+  const [contracts, setContracts] = useState<CustomerPanelContract[]>([]);
+  const [isLoadingContracts, setIsLoadingContracts] = useState(false);
+  const [contractsErrorMessage, setContractsErrorMessage] = useState<string | null>(null);
+  const [contractDetail, setContractDetail] = useState<CustomerPanelContract | null>(null);
+  const [isLoadingContractDetail, setIsLoadingContractDetail] = useState(false);
+  const [contractDetailError, setContractDetailError] = useState<string | null>(null);
+
+  const [projectDetail, setProjectDetail] = useState<CustomerPanelProjectDetail | null>(null);
+  const [isLoadingProjectDetail, setIsLoadingProjectDetail] = useState(false);
+  const [projectDetailError, setProjectDetailError] = useState<string | null>(null);
 
   const [meetingNotes, setMeetingNotes] = useState<CustomerMeetingNote[]>([]);
   const [isLoadingMeetingNotes, setIsLoadingMeetingNotes] = useState(false);
@@ -121,6 +141,124 @@ export default function CustomerPanelPage({
     };
   }, [onLogout, onRequireLogin, session]);
 
+  useEffect(() => {
+    if (!session) {
+      return;
+    }
+
+    if (!currentPath.startsWith(CUSTOMER_PANEL_PROJECT_DETAIL_PREFIX)) {
+      setProjectDetail(null);
+      setProjectDetailError(null);
+      setIsLoadingProjectDetail(false);
+      return;
+    }
+
+    const projectId = currentPath.replace(CUSTOMER_PANEL_PROJECT_DETAIL_PREFIX, "");
+    if (!projectId) {
+      setProjectDetail(null);
+      setProjectDetailError("Proje secilmedi.");
+      setIsLoadingProjectDetail(false);
+      return;
+    }
+
+    let isActive = true;
+
+    async function fetchProjectDetail() {
+      setIsLoadingProjectDetail(true);
+      setProjectDetailError(null);
+      setProjectDetail(null);
+
+      try {
+        const detail = await getCustomerProjectDetail(session.accessToken, projectId);
+        if (isActive) {
+          setProjectDetail(detail);
+        }
+      } catch (error) {
+        if (!isActive) return;
+
+        if (error instanceof ApiHttpError && error.status === 401) {
+          onLogout();
+          return;
+        }
+
+        if (error instanceof Error && error.message) {
+          setProjectDetailError(error.message);
+        } else {
+          setProjectDetailError("Proje detayi alinamadi.");
+        }
+      } finally {
+        if (isActive) {
+          setIsLoadingProjectDetail(false);
+        }
+      }
+    }
+
+    void fetchProjectDetail();
+
+    return () => {
+      isActive = false;
+    };
+  }, [currentPath, onLogout, session]);
+
+  useEffect(() => {
+    if (!session) {
+      return;
+    }
+
+    if (!currentPath.startsWith(CUSTOMER_PANEL_CONTRACT_DETAIL_PREFIX)) {
+      setContractDetail(null);
+      setContractDetailError(null);
+      setIsLoadingContractDetail(false);
+      return;
+    }
+
+    const contractId = currentPath.replace(CUSTOMER_PANEL_CONTRACT_DETAIL_PREFIX, "");
+    if (!contractId) {
+      setContractDetail(null);
+      setContractDetailError("Sozlesme secilmedi.");
+      setIsLoadingContractDetail(false);
+      return;
+    }
+
+    let isActive = true;
+
+    async function fetchContractDetail() {
+      setIsLoadingContractDetail(true);
+      setContractDetailError(null);
+      setContractDetail(null);
+
+      try {
+        const detail = await getCustomerContractDetail(session.accessToken, contractId);
+        if (isActive) {
+          setContractDetail(detail);
+        }
+      } catch (error) {
+        if (!isActive) return;
+
+        if (error instanceof ApiHttpError && error.status === 401) {
+          onLogout();
+          return;
+        }
+
+        if (error instanceof Error && error.message) {
+          setContractDetailError(error.message);
+        } else {
+          setContractDetailError("Sozlesme detayi alinamadi.");
+        }
+      } finally {
+        if (isActive) {
+          setIsLoadingContractDetail(false);
+        }
+      }
+    }
+
+    void fetchContractDetail();
+
+    return () => {
+      isActive = false;
+    };
+  }, [currentPath, onLogout, session]);
+
   const fetchTickets = useCallback(async () => {
     if (!session) return;
 
@@ -146,6 +284,31 @@ export default function CustomerPanelPage({
     }
   }, [onLogout, session]);
 
+  const fetchContracts = useCallback(async () => {
+    if (!session) return;
+
+    setIsLoadingContracts(true);
+    setContractsErrorMessage(null);
+
+    try {
+      const items = await getCustomerContracts(session.accessToken);
+      setContracts(items);
+    } catch (error) {
+      if (error instanceof ApiHttpError && error.status === 401) {
+        onLogout();
+        return;
+      }
+
+      if (error instanceof Error && error.message) {
+        setContractsErrorMessage(error.message);
+      } else {
+        setContractsErrorMessage("Sozlesmeler alinirken bir hata olustu.");
+      }
+    } finally {
+      setIsLoadingContracts(false);
+    }
+  }, [onLogout, session]);
+
   useEffect(() => {
     if (
       currentPath !== "/customer-panel/talepler"
@@ -156,6 +319,13 @@ export default function CustomerPanelPage({
     }
     void fetchTickets();
   }, [currentPath, fetchTickets]);
+
+  useEffect(() => {
+    if (currentPath !== "/customer-panel/sozlesmeler") {
+      return;
+    }
+    void fetchContracts();
+  }, [currentPath, fetchContracts]);
 
   const fetchMeetingNotes = useCallback(async (options?: { silent?: boolean }) => {
     if (!session) return;
@@ -279,7 +449,15 @@ export default function CustomerPanelPage({
     [onLogout, onRequireLogin, session],
   );
 
-  const pageName = useMemo(() => PAGE_NAMES[currentPath] ?? "Dashboard", [currentPath]);
+  const pageName = useMemo(() => {
+    if (currentPath.startsWith(CUSTOMER_PANEL_PROJECT_DETAIL_PREFIX)) {
+      return "Proje Detayi";
+    }
+    if (currentPath.startsWith(CUSTOMER_PANEL_CONTRACT_DETAIL_PREFIX)) {
+      return "Sozlesme Detayi";
+    }
+    return PAGE_NAMES[currentPath] ?? "Dashboard";
+  }, [currentPath]);
 
   if (!session) {
     return null;
@@ -339,6 +517,15 @@ export default function CustomerPanelPage({
             dashboardData={dashboardData}
             isLoading={isLoadingData}
             errorMessage={errorMessage}
+            projectDetail={projectDetail}
+            isLoadingProjectDetail={isLoadingProjectDetail}
+            projectDetailError={projectDetailError}
+            contracts={contracts}
+            isLoadingContracts={isLoadingContracts}
+            contractsErrorMessage={contractsErrorMessage}
+            contractDetail={contractDetail}
+            isLoadingContractDetail={isLoadingContractDetail}
+            contractDetailError={contractDetailError}
             tickets={tickets}
             isLoadingTickets={isLoadingTickets}
             isCreatingTicket={isCreatingTicket}
@@ -355,6 +542,7 @@ export default function CustomerPanelPage({
             onMeetingProjectChange={setSelectedMeetingProjectId}
             onCreateMeetingRequest={handleCreateMeetingRequest}
             onCreateTicket={handleCreateTicket}
+            onNavigate={onNavigate}
           />
         </main>
       </div>

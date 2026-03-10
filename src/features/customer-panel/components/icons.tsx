@@ -70,6 +70,22 @@ export function NoteIcon({ color = "currentColor" }: { color?: string }) {
   );
 }
 
+export function DocumentIcon({ color = "currentColor" }: { color?: string }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M8 3h6l5 5v13a1 1 0 0 1-1 1H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"
+        stroke={color}
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M14 3v5h5" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9 12h6M9 16h6" stroke={color} strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export function ChevronRightIcon({ color = "#6B7280" }: { color?: string }) {
   return (
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -107,6 +123,7 @@ export function LogoutIcon() {
 export function getItemIcon(icon: CustomerPanelNavItem["icon"], color?: string) {
   if (icon === "dashboard") return <DashboardIcon color={color} />;
   if (icon === "projects") return <FolderIcon color={color} />;
+  if (icon === "contracts") return <DocumentIcon color={color} />;
   if (icon === "requests") return <ListIcon color={color} />;
   if (icon === "notes") return <NoteIcon color={color} />;
   return <CheckIcon color={color} />;

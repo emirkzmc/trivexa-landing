@@ -1,4 +1,5 @@
 import { NAV_ITEMS, SIDEBAR_COLLAPSED_WIDTH, SIDEBAR_EXPANDED_WIDTH, MOBILE_SIDEBAR_WIDTH } from "../model/constants";
+import { CUSTOMER_PANEL_CONTRACT_DETAIL_PREFIX, CUSTOMER_PANEL_PROJECT_DETAIL_PREFIX } from "../model/types";
 import type { CustomerPanelPath } from "../model/types";
 import { ChevronRightIcon, CloseIcon, LogoutIcon, SquareGridIcon, getItemIcon } from "./icons";
 
@@ -122,7 +123,9 @@ export default function CustomerPanelSidebar({
       <nav style={{ flex: 1, padding: "12px 0" }}>
         <ul role="list" style={{ listStyle: "none", margin: 0, padding: 0 }}>
           {NAV_ITEMS.map((item) => {
-            const isActive = currentPath === item.path;
+            const isActive = currentPath === item.path
+              || (item.path === "/customer-panel/projeler" && currentPath.startsWith(CUSTOMER_PANEL_PROJECT_DETAIL_PREFIX))
+              || (item.path === "/customer-panel/sozlesmeler" && currentPath.startsWith(CUSTOMER_PANEL_CONTRACT_DETAIL_PREFIX));
             const itemColor = "#111827";
             const badgeCount = item.path === "/customer-panel/talepler"
               ? unreadTickets
