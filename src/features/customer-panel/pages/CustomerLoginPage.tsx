@@ -3,7 +3,7 @@ import Button from "../../../shared/ui/Button";
 import Input from "../../../shared/ui/Input";
 import LoginBackground from "../../../shared/ui/LoginBackground";
 import PasswordResetModule from "../components/PasswordResetModule";
-import { loginCustomerPanel } from "../model/api";
+import { ApiHttpError, loginCustomerPanel } from "../model/api";
 import type { CustomerPanelSession } from "../model/types";
 
 interface CustomerLoginPageProps {
@@ -44,6 +44,10 @@ export default function CustomerLoginPage({ onLogin }: CustomerLoginPageProps) {
       }
       onLogin(session);
     } catch (error) {
+      if (error instanceof ApiHttpError && error.status === 401) {
+        setErrorMessage("E-posta veya şifre hatalı.");
+        return;
+      }
       const fallbackMessage = "Giriş yapılamadı. Bilgileri kontrol edip tekrar deneyin.";
       if (error instanceof Error && error.message) {
         setErrorMessage(error.message);
