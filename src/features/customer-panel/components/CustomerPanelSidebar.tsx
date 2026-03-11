@@ -1,7 +1,7 @@
 import { NAV_ITEMS, SIDEBAR_COLLAPSED_WIDTH, SIDEBAR_EXPANDED_WIDTH, MOBILE_SIDEBAR_WIDTH } from "../model/constants";
 import { CUSTOMER_PANEL_CONTRACT_DETAIL_PREFIX, CUSTOMER_PANEL_PROJECT_DETAIL_PREFIX } from "../model/types";
 import type { CustomerPanelPath } from "../model/types";
-import { ChevronRightIcon, CloseIcon, LogoutIcon, SquareGridIcon, getItemIcon } from "./icons";
+import { ChevronRightIcon, CloseIcon, LogoutIcon, SquareGridIcon, ItemIcon } from "./icons";
 import CustomerPanelAvatar from "./CustomerPanelAvatar";
 
 interface CustomerPanelSidebarProps {
@@ -162,7 +162,7 @@ export default function CustomerPanelSidebar({
                   }}
                 >
                   <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    {getItemIcon(item.icon, itemColor)}
+                    <ItemIcon icon={item.icon} color={itemColor} />
                   </span>
 
                   {!collapsedState && <span style={{ flex: 1, lineHeight: 1.3, whiteSpace: "nowrap" }}>{item.label}</span>}

@@ -5,9 +5,8 @@ import Navbar from "../shared/layout/Navbar";
 import ContactPage from "../features/contact/pages/ContactPage";
 import HomePage from "../features/home/pages/HomePage";
 import TeamPage from "../features/team/pages/TeamPage";
-import CustomerPanelPage, {
-  CUSTOMER_PANEL_DEFAULT_PATH,
-} from "../features/customer-panel/pages/CustomerPanelPage";
+import CustomerPanelPage from "../features/customer-panel/pages/CustomerPanelPage";
+import { CUSTOMER_PANEL_DEFAULT_PATH } from "../features/customer-panel/model/constants";
 import CustomerLoginPage from "../features/customer-panel/pages/CustomerLoginPage";
 import PasswordResetPreviewPage from "../features/customer-panel/pages/PasswordResetPreviewPage";
 import type { CustomerPanelSession } from "../features/customer-panel/model/types";

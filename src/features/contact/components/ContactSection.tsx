@@ -62,11 +62,18 @@ export default function ContactSection() {
   }
 
   return (
-    <SectionBlock className="min-h-screen scroll-mt-24 bg-[#f8f9fb]" containerClassName="max-w-6xl">
+    <SectionBlock
+      className="min-h-screen scroll-mt-24 bg-[#f8f9fb]"
+      containerClassName="max-w-6xl px-6 sm:px-10"
+    >
       <div className="mb-12">
         <Label>{contact.label}</Label>
-        <h2 className="mt-4 text-4xl font-semibold leading-tight text-[#111827] md:text-5xl">{contact.title}</h2>
-        <p className="mt-6 max-w-3xl text-lg leading-8 text-[#374151]">{contact.description}</p>
+        <h2 className="mt-4 text-3xl font-semibold leading-tight text-[#111827] sm:text-4xl md:text-5xl">
+          {contact.title}
+        </h2>
+        <p className="mt-6 max-w-3xl text-base leading-7 text-[#374151] sm:text-lg sm:leading-8">
+          {contact.description}
+        </p>
       </div>
 
       <div className="grid items-start gap-10 md:grid-cols-2 md:gap-14">
@@ -74,7 +81,7 @@ export default function ContactSection() {
           <img
             src={contact.image}
             alt="Iletisim gorseli"
-            className="w-full rounded-lg border border-[#e5e7eb] object-cover shadow-sm backdrop-blur-2xl"
+            className="h-64 w-full rounded-lg border border-[#e5e7eb] object-cover shadow-sm backdrop-blur-2xl sm:h-72 md:h-[420px]"
           />
         </div>
 
@@ -139,7 +146,7 @@ export default function ContactSection() {
                 <textarea
                   id="description"
                   name="description"
-                  rows={6}
+                  rows={5}
                   placeholder="Proje detaylarini kisaca paylasin..."
                   className="rounded-xl border border-[#d1d5db] bg-white px-4 py-3 text-[#111827] outline-none transition focus:border-[#111827]"
                   value={form.message}
@@ -157,7 +164,7 @@ export default function ContactSection() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="rounded-full bg-[#111827] px-8 py-3 text-sm font-medium text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
+                  className="w-full rounded-full bg-[#111827] px-8 py-3 text-sm font-medium text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                 >
                   {isSubmitting ? "Gonderiliyor..." : "Gonder"}
                 </button>
