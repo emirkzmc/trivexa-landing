@@ -3,4 +3,5 @@ import type { CustomerPanelPath } from '../../features/customer-panel/pages/Cust
 
 export type CustomerLoginPath = `/customer-login${string}`;
 export type PreviewPath = '/password-reset-preview';
-export type AppPath = NavPath | CustomerPanelPath | CustomerLoginPath | PreviewPath;
+export type PolicyPath = '/gizlilik-politikasi' | '/kullanici-politikasi';
+export type AppPath = NavPath | CustomerPanelPath | CustomerLoginPath | PreviewPath | PolicyPath;

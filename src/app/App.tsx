@@ -10,9 +10,10 @@ import { CUSTOMER_PANEL_DEFAULT_PATH } from "../features/customer-panel/model/co
 import CustomerLoginPage from "../features/customer-panel/pages/CustomerLoginPage";
 import PasswordResetPreviewPage from "../features/customer-panel/pages/PasswordResetPreviewPage";
 import type { CustomerPanelSession } from "../features/customer-panel/model/types";
-import { clearPortalSession, persistPortalSession, readPortalSession } from "./portalSession";
+import { persistPortalSession, readPortalSession, clearPortalSession } from "./portalSession";
 import { isCustomerLoginRoute, isCustomerPanelRoute } from "./router/routeUtils";
 import { useAppRouter } from "./router/useAppRouter";
+import PolicyPage from "../features/policies/pages/PolicyPage";
 
 export default function App() {
   const { currentPath, isScrolled, navigate } = useAppRouter();
@@ -58,6 +59,12 @@ export default function App() {
     }
     if (currentPath === "/takim") {
       return <TeamPage />;
+    }
+    if (currentPath === "/gizlilik-politikasi") {
+      return <PolicyPage type="privacy" />;
+    }
+    if (currentPath === "/kullanici-politikasi") {
+      return <PolicyPage type="user" />;
     }
     return <HomePage />;
   })();

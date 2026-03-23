@@ -31,6 +31,12 @@ export function normalizePath(pathname: string, search: string): AppPath {
   if (pathname === '/takim') {
     return '/takim';
   }
+  if (pathname === '/gizlilik-politikasi') {
+    return '/gizlilik-politikasi';
+  }
+  if (pathname === '/kullanici-politikasi') {
+    return '/kullanici-politikasi';
+  }
   return '/';
 }
 

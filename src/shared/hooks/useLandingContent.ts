@@ -66,6 +66,8 @@ function normalizeLandingContent(raw: unknown): LandingContent {
     stats: impactStats,
   };
   const contact = { ...DEFAULT_LANDING_CONTENT.contact, ...(payload.contact ?? {}) };
+  const privacyPolicy = { ...DEFAULT_LANDING_CONTENT.privacyPolicy, ...(payload.privacyPolicy ?? {}) };
+  const userPolicy = { ...DEFAULT_LANDING_CONTENT.userPolicy, ...(payload.userPolicy ?? {}) };
 
   return {
     hero,
@@ -74,6 +76,8 @@ function normalizeLandingContent(raw: unknown): LandingContent {
     process,
     impact,
     contact,
+    privacyPolicy,
+    userPolicy,
     meta: payload.meta ?? undefined,
   };
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export type NavPath = "/" | "/iletisim" | "/takim";
+export type NavPath = "/" | "/iletisim" | "/takim" | "/gizlilik-politikasi" | "/kullanici-politikasi";
 
 interface NavbarProps {
   currentPath: NavPath;
