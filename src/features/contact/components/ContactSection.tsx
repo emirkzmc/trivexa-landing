@@ -76,18 +76,18 @@ export default function ContactSection() {
         </p>
       </div>
 
-      <div className="grid items-start gap-10 md:grid-cols-2 md:gap-14">
+      <div className="grid items-center gap-10 md:grid-cols-2 md:gap-14">
         <div>
           <img
             src={contact.image}
             alt="Iletisim gorseli"
-            className="h-64 w-full rounded-lg border border-[#e5e7eb] object-cover shadow-sm backdrop-blur-2xl sm:h-72 md:h-[420px]"
+            className="h-64 w-full rounded-lg border border-[#e5e7eb] object-cover shadow-sm backdrop-blur-2xl sm:h-72 md:h-full"
           />
         </div>
 
         <div>
           <form className="flex flex-col gap-5 rounded-2xl md:px-8" onSubmit={handleSubmit}>
-              <FormField label="Isim" htmlFor="name">
+              <FormField label="İsim" htmlFor="name">
                 <Input
                   id="name"
                   type="text"
@@ -125,7 +125,7 @@ export default function ContactSection() {
                   id="company"
                   type="text"
                   name="company"
-                  placeholder="Firma adi (opsiyonel)"
+                  placeholder="Firma adı (opsiyonel)"
                   value={form.company}
                   onChange={(event) => setForm((prev) => ({ ...prev, company: event.target.value }))}
                 />
@@ -136,18 +136,18 @@ export default function ContactSection() {
                   id="subject"
                   type="text"
                   name="subject"
-                  placeholder="Kisa konu basligi"
+                  placeholder="Kısa konu başlığı"
                   value={form.subject}
                   onChange={(event) => setForm((prev) => ({ ...prev, subject: event.target.value }))}
                 />
               </FormField>
 
-              <FormField label="Aciklama" htmlFor="description">
+              <FormField label="Açıklama" htmlFor="description">
                 <textarea
                   id="description"
                   name="description"
                   rows={5}
-                  placeholder="Proje detaylarini kisaca paylasin..."
+                  placeholder="Proje detaylarını kısaca paylaşın..."
                   className="rounded-xl border border-[#d1d5db] bg-white px-4 py-3 text-[#111827] outline-none transition focus:border-[#111827]"
                   value={form.message}
                   onChange={(event) => setForm((prev) => ({ ...prev, message: event.target.value }))}
@@ -164,9 +164,9 @@ export default function ContactSection() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full rounded-full bg-[#111827] px-8 py-3 text-sm font-medium text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                  className="cursor-pointer w-full rounded-full bg-[#111827] px-8 py-3 text-sm font-medium text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                 >
-                  {isSubmitting ? "Gonderiliyor..." : "Gonder"}
+                  {isSubmitting ? "Gönderiliyor..." : "Gönder"}
                 </button>
               </div>
           </form>

@@ -14,8 +14,8 @@ export default function Navbar({ currentPath, isScrolled, onNavigate }: NavbarPr
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navItems: Array<{ label: string; path: NavPath }> = [
     { label: "Ana Sayfa", path: "/" },
-    { label: "Iletisim", path: "/iletisim" },
-    { label: "Takim", path: "/takim" },
+    { label: "İletişim", path: "/iletisim" },
+    { label: "Takım", path: "/takim" },
   ];
   const menuId = "landing-mobile-menu";
 
@@ -34,17 +34,17 @@ export default function Navbar({ currentPath, isScrolled, onNavigate }: NavbarPr
         <button
           type="button"
           onClick={() => handleNavigate("/")}
-          className={`text-2xl tracking-[0.12em] ${textColorClass}`}
+          className={`text-2xl tracking-[0.12em] cursor-pointer ${textColorClass}`}
         >
           TRIVEXA
         </button>
-        <ul className={`hidden items-center gap-8 text-sm font-medium md:flex md:text-base ${textColorClass}`}>
+        <ul className={` hidden items-center gap-8 text-sm font-medium md:flex md:text-base ${textColorClass}`}>
           {navItems.map((item) => (
             <li key={item.path}>
               <button
                 type="button"
                 onClick={() => handleNavigate(item.path)}
-                className={currentPath === item.path ? "underline underline-offset-4" : ""}
+                className={currentPath === item.path ? "cursor-pointer underline underline-offset-4" : "cursor-pointer"}
               >
                 {item.label}
               </button>

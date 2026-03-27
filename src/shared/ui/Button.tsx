@@ -21,7 +21,7 @@ export default function Button({
   ...rest
 }: ButtonProps) {
   return (
-    <button type={type} className={`${BUTTON_VARIANT_CLASSES[variant]} ${className}`.trim()} {...rest}>
+    <button type={type} className={`${BUTTON_VARIANT_CLASSES[variant]} ${className} cursor-pointer`.trim()} {...rest}>
       {children ?? text}
     </button>
   );
