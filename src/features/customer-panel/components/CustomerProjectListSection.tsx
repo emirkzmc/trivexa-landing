@@ -31,7 +31,7 @@ export default function CustomerProjectListSection({
             {projects.length === 0 ? (
               <tr>
                 <td colSpan={3} className="px-2 py-6 text-center text-sm text-slate-500">
-                  Backend'de proje bulunmuyor.
+                  Aktif projeniz bulunmuyor.
                 </td>
               </tr>
             ) : (

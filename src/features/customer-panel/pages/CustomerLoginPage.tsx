@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useState, useEffect, type FormEvent } from "react";
 import Button from "../../../shared/ui/Button";
 import Input from "../../../shared/ui/Input";
 import LoginBackground from "../../../shared/ui/LoginBackground";
@@ -22,6 +22,25 @@ export default function CustomerLoginPage({ onLogin }: CustomerLoginPageProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const hasMagicToken = Boolean(params.get("token"));
+  const autologin = params.get("autologin") === "true";
+
+  useEffect(() => {
+    if (autologin && email) {
+      setPassword("password123");
+      setIsSubmitting(true);
+      
+      loginCustomerPanel(email.trim(), "password123")
+        .then(session => {
+          if (!session.forcePasswordChange) {
+            onLogin(session);
+          }
+        })
+        .catch(err => {
+          setErrorMessage("Otomatik giriş başarısız. Lütfen bilgileri kontrol edin.");
+          setIsSubmitting(false);
+        });
+    }
+  }, [autologin, email]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
