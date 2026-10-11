@@ -35,7 +35,7 @@ export default function CustomerLoginPage({ onLogin }: CustomerLoginPageProps) {
             onLogin(session);
           }
         })
-        .catch(err => {
+        .catch(() => {
           setErrorMessage("Otomatik giriş başarısız. Lütfen bilgileri kontrol edin.");
           setIsSubmitting(false);
         });

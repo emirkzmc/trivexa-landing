@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function DemoExplanationPage() {
   return (
     <div className="bg-white min-h-screen">
