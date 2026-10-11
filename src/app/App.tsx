@@ -14,6 +14,8 @@ import { persistPortalSession, readPortalSession, clearPortalSession } from "./p
 import { isCustomerLoginRoute, isCustomerPanelRoute } from "./router/routeUtils";
 import { useAppRouter } from "./router/useAppRouter";
 import PolicyPage from "../features/policies/pages/PolicyPage";
+import DemoExplanationPage from "../features/demo/pages/DemoExplanationPage";
+import { FeatureFlagService } from "../shared/services/feature-flag.service";
 
 export default function App() {
   const { currentPath, isScrolled, navigate } = useAppRouter();
@@ -66,6 +68,11 @@ export default function App() {
     if (currentPath === "/kullanici-politikasi") {
       return <PolicyPage type="user" />;
     }
+    
+    if (FeatureFlagService.isEnabled('DEMO_MODE') && currentPath === "/") {
+      return <DemoExplanationPage />;
+    }
+    
     return <HomePage />;
   })();
 
